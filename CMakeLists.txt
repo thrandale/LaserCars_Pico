@@ -22,10 +22,15 @@ pico_add_extra_outputs(${PROJECT_NAME})
 # Link any libraries here
 target_link_libraries(${PROJECT_NAME}
   pico_stdlib
+  hardware_pio
+  pico_multicore
   # Add other libraries here
+  IRRxGroup
+  nec_transmit_library
 )
 
 # Add other subdirectories here
+add_subdirectory(lib)
 
 # Enable uart output and disable usb output
 # Switch this if not using picoprobe
