@@ -22,7 +22,7 @@
 .wrap_target
     pull                            ; pull the data from the FIFO into the OSR
     out Y, 5                        ; put 5 bits from the OSR into Y
-    ; set pindirs to Y
+    set pindirs to Y
     
     set Y, BURSTS_1                 ; set the number of bursts to generate
     irq CONTROL_IRQ                 ; trigger the controller

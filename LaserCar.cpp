@@ -32,8 +32,6 @@ int main()
 
     int senderSM = nec_tx_init(pio, senderPin);
 
-    pio_sm_set_consecutive_pindirs_with_mask(pio, senderSM, 1 << senderPin, 1 << senderPin, true);
-
     if (senderSM == -1)
     {
         printf("Error initializing PIO\n");
