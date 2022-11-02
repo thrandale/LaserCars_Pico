@@ -1,11 +1,4 @@
-;
-; Copyright (c) 2021 mjcross
-;
-; SPDX-License-Identifier: BSD-3-Clause
-;
-
-
-.program nec_carrier_burst
+.program IRSender_burst
 
 ; Generate bursts of carrier.
 ;
@@ -21,11 +14,10 @@
 
 .wrap_target
     pull                            ; pull the data from the FIFO into the OSR
-    out Y, 5                        ; put 5 bits from the OSR into Y
-    set pindirs to Y
-    
+    out EXEC, 16                    ; execute the instruction from the OSR
+                                    ; this will set the pindirs
+                                    
     set Y, BURSTS_1                 ; set the number of bursts to generate
-    irq CONTROL_IRQ                 ; trigger the controller
 
 signal_loop_1:
     set X, (NUM_CYCLES - 1)         ; initialise the loop counter
@@ -35,7 +27,7 @@ cycle_loop_1:
     set pins, 1                     ; set the pin high (1 cycle)
     set pins, 0 [1]                 ; set the pin low (2 cycles)
     jmp X--, cycle_loop_1           ; (1 more cycle)
-    jmp Y-- signal_loop_1
+    jmp Y-- signal_loop_1           
 
 signal_loop_2_start:
     set Y, BURSTS_2                 ; set the number of bursts to generate
@@ -54,9 +46,9 @@ cycle_loop_2:
 
 
 % c-sdk {
-static inline void nec_carrier_burst_program_init(PIO pio, uint sm, uint offset, uint pin, float freq, uint numPins) {
+static inline void IRSender_burst_program_init(PIO pio, uint sm, uint offset, uint pin, float freq, uint numPins) {
     // Create a new state machine configuration
-    pio_sm_config c = nec_carrier_burst_program_get_default_config(offset);
+    pio_sm_config c = IRSender_burst_program_get_default_config(offset);
 
     // Map the SET pin group to the state machine's pins
     sm_config_set_set_pins(&c, pin, numPins);
@@ -67,7 +59,7 @@ static inline void nec_carrier_burst_program_init(PIO pio, uint sm, uint offset,
     }
 
     // Set the clock divider to generate the required frequency
-    float div = clock_get_hz(clk_sys) / (freq * nec_carrier_burst_TICKS_PER_LOOP);
+    float div = clock_get_hz(clk_sys) / (freq * IRSender_burst_TICKS_PER_LOOP);
     sm_config_set_clkdiv(&c, div);
 
     // Apply the configuration to the state machine
