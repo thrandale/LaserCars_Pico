@@ -52,30 +52,53 @@ void IRRxGroup::getData()
 {
     for (int i = 0; i < pinCount; i++)
     {
-        union
-        {
-            uint32_t raw;
-            struct
-            {
-                uint8_t address;
-                uint8_t inverted_address;
-                uint8_t data;
-                uint8_t inverted_data;
-            };
-        } f;
+        uint32_t raw;
         if (!pio_sm_is_rx_fifo_empty(pio, sms[i]))
         {
-            f.raw = pio_sm_get(pio, sms[i]);
-        }
-
-        if (f.address != (f.inverted_address ^ 0xff) ||
-            f.data != (f.inverted_data ^ 0xff))
-        {
-            printf("Received: %08x\n", f.raw);
+            raw = pio_sm_get(pio, sms[i]);
         }
         else
         {
-            printf("Received: %02x, %02x\n", f.address, f.data);
+            continue;
         }
+
+        std::map<uint8_t, uint8_t> dataMap;
+
+        bool found = false;
+        for (int j = 0; j < 4; j++)
+        {
+            uint8_t data = (raw >> (j * 8)) & 0xFF;
+
+            if (dataMap.find(data) == dataMap.end())
+            {
+                dataMap[data] = 1;
+            }
+            else
+            {
+                dataMap[data]++;
+            }
+
+            if (dataMap[data] >= 3)
+            {
+                printf("Received %d: %02x\n", i, data);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            printf("Received %d: %08x\n", i, raw);
+        }
+
+        // if (f.address == (f.inverted_address ^ 0xff) &&
+        //     f.data == (f.inverted_data ^ 0xff))
+        // {
+        //     printf("Received %d: %02x, %02x\n", i, f.address, f.data);
+        // }
+        // else
+        // {
+        //     printf("Received %d: %08x\n", i, f.raw);
+        // }
     }
 }

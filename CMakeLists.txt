@@ -25,6 +25,7 @@ target_link_libraries(${PROJECT_NAME}
   hardware_pio
   pico_multicore
   # Add other libraries here
+	IRSender
   IRRxGroup
   nec_transmit_library
 )
