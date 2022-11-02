@@ -9,6 +9,7 @@ pico_generate_pio_header(IRSender ${CMAKE_CURRENT_LIST_DIR}/IRSender_control.pio
 target_link_libraries(
   IRSender
   pico_stdlib
+  hardware_pio
 )
 
 # add the `binary` directory so that the generated headers are included in the project

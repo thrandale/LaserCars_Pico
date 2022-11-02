@@ -8,7 +8,6 @@
 .define NUM_CYCLES 21               ; how many carrier cycles to generate
 .define BURST_IRQ 7                 ; which IRQ should trigger a carrier burst
 .define public TICKS_PER_LOOP 4     ; the number of instructions in the loop (for timing)
-.define CONTROL_IRQ 6               ; which IRQ should be used to start the controller
 .define BURSTS_1 25                 ; half the number of burst per message. (16 + 32 + 1) / 2
 .define BURSTS_2 24                 ; the other half the number of burst per message. (16 + 32 + 1) / 2
 
@@ -54,7 +53,8 @@ static inline void IRSender_burst_program_init(PIO pio, uint sm, uint offset, ui
     sm_config_set_set_pins(&c, pin, numPins);
 
     // Set the GPIO function of the pins
-    for (uint i = 0; i < numPins; i++) {
+    for(uint i = 0; i < numPins; i++)
+    {
         pio_gpio_init(pio, pin + i);
     }
 

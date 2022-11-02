@@ -1,5 +1,5 @@
-#ifndef IRRXGROUP_H
-#define IRRXGROUP_H
+#ifndef IRReceiver_H
+#define IRReceiver_H
 
 #include "hardware/clocks.h"
 #include "hardware/pio.h"
@@ -7,12 +7,12 @@
 #include <map>
 #include <stdio.h>
 
-#include "nec_receive.pio.h"
+#include "IRReceiver.pio.h"
 
-class IRRxGroup
+class IRReceiver
 {
 public:
-    IRRxGroup(PIO pio, const uint pins[], int pinCount);
+    IRReceiver(PIO pio, const uint pins[], int pinCount);
 
     void getData();
 

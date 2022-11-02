@@ -1,6 +1,6 @@
-#include "IRRxGroup.h"
+#include "IRReceiver.h"
 
-IRRxGroup::IRRxGroup(PIO pio, const uint pins[], int pinCount)
+IRReceiver::IRReceiver(PIO pio, const uint pins[], int pinCount)
 {
     this->pio = pio;
     this->offset = 0;
@@ -14,7 +14,7 @@ IRRxGroup::IRRxGroup(PIO pio, const uint pins[], int pinCount)
     init();
 }
 
-void IRRxGroup::init()
+void IRReceiver::init()
 {
     // Disable pullups on all pins
     for (int i = 0; i < pinCount; i++)
@@ -23,9 +23,9 @@ void IRRxGroup::init()
     }
 
     // Add the program to the PIO
-    if (pio_can_add_program(pio, &nec_receive_program))
+    if (pio_can_add_program(pio, &IRReceiver_program))
     {
-        offset = pio_add_program(pio, &nec_receive_program);
+        offset = pio_add_program(pio, &IRReceiver_program);
     }
     else
     {
@@ -43,12 +43,12 @@ void IRRxGroup::init()
         else
         {
             // init the program in the sm
-            nec_receive_program_init(pio, sms[i], offset, pins[i]);
+            IRReceiver_program_init(pio, sms[i], offset, pins[i]);
         }
     }
 }
 
-void IRRxGroup::getData()
+void IRReceiver::getData()
 {
     for (int i = 0; i < pinCount; i++)
     {

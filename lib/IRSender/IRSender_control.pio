@@ -12,7 +12,6 @@
 ; burst period.
 ;
 .define BURST_IRQ 7                     ; the IRQ used to trigger a carrier burst
-.define CONTROL_IRQ 6                   ; which IRQ should be used to start the controller
 .define NUM_INITIAL_BURSTS 16           ; how many bursts to transmit for a 'sync burst'
 
 .wrap_target

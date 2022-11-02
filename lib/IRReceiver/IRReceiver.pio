@@ -1,11 +1,4 @@
-;
-; Copyright (c) 2021 mjcross
-;
-; SPDX-License-Identifier: BSD-3-Clause
-;
-
-
-.program nec_receive
+.program IRReceiver
 
 ; Decode IR frames in NEC format and push 32-bit words to the input FIFO.
 ;
@@ -45,17 +38,17 @@ data_bit:
 
 
 % c-sdk {
-static inline void nec_receive_program_init(PIO pio, uint sm, uint offset, uint pin)
+static inline void IRReceiver_program_init(PIO pio, uint sm, uint offset, uint pin)
 {
 
-    // Set the GPIO function of the pin (connect the PIO to the pad)
+    // Set the GPIO function of the pin(connect the PIO to the pad)
     pio_gpio_init(pio, pin);
 
     // Set the pin direction to `input` at the PIO
     pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, false);
 
     // Create a new state machine configuration
-    pio_sm_config c = nec_receive_program_get_default_config(offset);
+    pio_sm_config c = IRReceiver_program_get_default_config(offset);
 
     // configure the Input Shift Register
     sm_config_set_in_shift(&c,

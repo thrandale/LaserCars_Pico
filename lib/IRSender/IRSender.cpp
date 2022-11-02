@@ -9,10 +9,50 @@ IRSender::IRSender(PIO pio, uint startPin, uint numPins)
 
 int IRSender::init()
 {
-    // Constructor
+    // install the burst program in the PIO shared instruction space
+    if (pio_can_add_program(pio, &IRSender_burst_program))
+    {
+        burstOffset = pio_add_program(pio, &IRSender_burst_program);
+    }
+    else
+    {
+        return -1;
+    }
+
+    // claim an unused state machine on this PIO
+    int burstSm = pio_claim_unused_sm(pio, true);
+    if (burstSm == -1)
+    {
+        return -1;
+    }
+
+    // configure and enable the state machine
+    IRSender_burst_program_init(pio, burstSm, burstOffset, startPin, numPins, 38.222e3); // 38.222 kHz carrier
+
+    // install the control program in the PIO shared instruction space
+    if (pio_can_add_program(pio, &IRSender_control_program))
+    {
+        controlOffset = pio_add_program(pio, &IRSender_control_program);
+    }
+    else
+    {
+        return -1;
+    }
+
+    // claim an unused state machine on this PIO
+    int controlSm = pio_claim_unused_sm(pio, true);
+    if (controlSm == -1)
+    {
+        return -1;
+    }
+
+    // configure and enable the state machine
+    IRSender_control_program_init(pio, controlSm, controlOffset, startPin, numPins);
+
+    return 0;
 }
 
-IRSender::~IRSender()
+void IRSender::send(uint8_t data)
 {
     // message is 8 bits, 5 bits for the car id, 3 bits for the side.
 
