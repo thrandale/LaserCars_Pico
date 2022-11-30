@@ -5,7 +5,7 @@
 ;
 
 
-.program nec_carrier_control
+.program IRSender_control
 
 ; Transmit an encoded 32-bit frame in NEC IR format.
 ;
@@ -46,11 +46,11 @@ jmp !OSRE data_bit                      ; continue sending bits until the OSR is
 
 
 % c-sdk {
-static inline void nec_carrier_control_program_init (PIO pio, uint sm, uint offset, float tick_rate, int bits_per_frame) {
+static inline void IRSender_control_program_init (PIO pio, uint sm, uint offset, float tick_rate, int bits_per_frame) {
 
     // create a new state machine configuration
     //
-    pio_sm_config c = nec_carrier_control_program_get_default_config(offset);
+    pio_sm_config c = IRSender_control_program_get_default_config(offset);
 
     // configure the output shift register
     //

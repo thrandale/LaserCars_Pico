@@ -5,7 +5,7 @@
 ;
 
 
-.program nec_carrier_burst
+.program IRSender_burst
 
 ; Generate bursts of carrier.
 ;
@@ -27,10 +27,10 @@ cycle_loop:
 
 
 % c-sdk {
-static inline void nec_carrier_burst_program_init(PIO pio, uint sm, uint offset, uint pin, float freq) {
+static inline void IRSender_burst_program_init(PIO pio, uint sm, uint offset, uint pin, float freq) {
     // Create a new state machine configuration
     //
-    pio_sm_config c = nec_carrier_burst_program_get_default_config (offset);
+    pio_sm_config c = IRSender_burst_program_get_default_config (offset);
 
     // Map the SET pin group to one pin, namely the `pin`
     // parameter to this function.
@@ -47,7 +47,7 @@ static inline void nec_carrier_burst_program_init(PIO pio, uint sm, uint offset,
 
     // Set the clock divider to generate the required frequency
     //
-    float div = clock_get_hz (clk_sys) / (freq * nec_carrier_burst_TICKS_PER_LOOP);
+    float div = clock_get_hz (clk_sys) / (freq * IRSender_burst_TICKS_PER_LOOP);
     sm_config_set_clkdiv (&c, div);
 
     // Apply the configuration to the state machine

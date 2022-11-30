@@ -10,23 +10,23 @@
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"    // for clock_get_hz()
-#include "nec_transmit.h"
+#include "IRSender.h"
 
 // import the assembled PIO state machine programs
-#include "nec_carrier_burst.pio.h"
-#include "nec_carrier_control.pio.h"
+#include "IRSender_burst.pio.h"
+#include "IRSender_control.pio.h"
 
 // Claim an unused state machine on the specified PIO and configure it
 // to transmit NEC IR frames on the specificied GPIO pin.
 //
 // Returns: on success, the number of the carrier_control state machine
 // otherwise -1
-int nec_tx_init(PIO pio, uint pin_num) {
+int IRSender_init(PIO pio, uint pin_num) {
 
     // install the carrier_burst program in the PIO shared instruction space
     uint carrier_burst_offset;
-    if (pio_can_add_program(pio, &nec_carrier_burst_program)) {
-        carrier_burst_offset = pio_add_program(pio, &nec_carrier_burst_program);
+    if (pio_can_add_program(pio, &IRSender_burst_program)) {
+        carrier_burst_offset = pio_add_program(pio, &IRSender_burst_program);
     } else {
         return -1;
     }
@@ -38,7 +38,7 @@ int nec_tx_init(PIO pio, uint pin_num) {
     }
 
     // configure and enable the state machine
-    nec_carrier_burst_program_init(pio,
+    IRSender_burst_program_init(pio,
                                    carrier_burst_sm,
                                    carrier_burst_offset,
                                    pin_num,
@@ -46,8 +46,8 @@ int nec_tx_init(PIO pio, uint pin_num) {
 
     // install the carrier_control program in the PIO shared instruction space
     uint carrier_control_offset;
-    if (pio_can_add_program(pio, &nec_carrier_control_program)) {
-        carrier_control_offset = pio_add_program(pio, &nec_carrier_control_program);
+    if (pio_can_add_program(pio, &IRSender_control_program)) {
+        carrier_control_offset = pio_add_program(pio, &IRSender_control_program);
     } else {
         return -1;
     }
@@ -59,7 +59,7 @@ int nec_tx_init(PIO pio, uint pin_num) {
     }
 
     // configure and enable the state machine
-    nec_carrier_control_program_init(pio,
+    IRSender_control_program_init(pio,
                                      carrier_control_sm,
                                      carrier_control_offset,
                                      2 * (1 / 562.5e-6f),        // 2 ticks per 562.5us carrier burst

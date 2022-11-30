@@ -9,24 +9,24 @@
 #include "hardware/pio.h"
 #include "hardware/clocks.h"    // for clock_get_hz()
 
-#include "nec_receive.h"
+#include "IRReceiver.h"
 
 // import the assembled PIO state machine program
-#include "nec_receive.pio.h"
+#include "IRReceiver.pio.h"
 
 // Claim an unused state machine on the specified PIO and configure it
 // to receive NEC IR frames on the given GPIO pin.
 //
 // Returns: the state machine number on success, otherwise -1
-int nec_rx_init(PIO pio, uint pin_num) {
+int IRReceiver_init(PIO pio, uint pin_num) {
 
     // disable pull-up and pull-down on gpio pin
     gpio_disable_pulls(pin_num);
 
     // install the program in the PIO shared instruction space
     uint offset;
-    if (pio_can_add_program(pio, &nec_receive_program)) {
-        offset = pio_add_program(pio, &nec_receive_program);
+    if (pio_can_add_program(pio, &IRReceiver_program)) {
+        offset = pio_add_program(pio, &IRReceiver_program);
     } else {
         return -1;      // the program could not be added
     }
@@ -38,7 +38,7 @@ int nec_rx_init(PIO pio, uint pin_num) {
     }
 
     // configure and enable the state machine
-    nec_receive_program_init(pio, sm, offset, pin_num);
+    IRReceiver_program_init(pio, sm, offset, pin_num);
 
     return sm;
 }
