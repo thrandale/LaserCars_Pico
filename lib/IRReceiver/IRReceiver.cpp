@@ -72,6 +72,10 @@ uint8_t IRReceiver::Decode(uint32_t frame)
     for (int j = 0; j < 4; j++)
     {
         uint8_t data = (frame >> (j * 8)) & 0xFF;
+        if (j > 1)
+        {
+            data = data ^ 0xFF;
+        }
 
         if (dataMap.find(data) == dataMap.end())
         {

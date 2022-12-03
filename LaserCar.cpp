@@ -24,6 +24,7 @@ void core1_entry()
             if (rx_data != -1)
             {
                 printf("\treceived: %02x", rx_data);
+                // printf("\treceived: %02x %02x %02x %02x", rx_frame >> 24, (rx_frame >> 16) & 0xff, (rx_frame >> 8) & 0xff, rx_frame & 0xff);
             }
             else
             {

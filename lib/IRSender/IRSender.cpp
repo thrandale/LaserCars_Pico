@@ -30,7 +30,8 @@ IRSender::IRSender(PIO pio, uint pin)
                                 burstSM,
                                 burstProgramOffset,
                                 pin,
-                                38.222e3); // 38.222 kHz carrier
+                                38.222e3, // 38.222 kHz carrier
+                                16);
 
     // install the carrier_control program in the PIO shared instruction space
     if (pio_can_add_program(pio, &IRSender_control_program))
@@ -67,11 +68,14 @@ uint32_t IRSender::nec_encode_frame(uint8_t address, uint8_t data)
 
 void IRSender::Send(uint8_t data)
 {
+    uint16_t command = 0xE09F;
+    pio_sm_put(pio, burstSM, command);
     uint32_t frame = Encode(data);
+    // printf("\nSending frame: %02x %02x %02x %02x", frame & 0xff, (frame >> 8) & 0xff, (frame >> 16) & 0xff, (frame >> 24) & 0xff);
     pio_sm_put(pio, controlSM, frame);
 }
 
 uint32_t IRSender::Encode(uint8_t data)
 {
-    return (data) | (data << 8) | (data << 16) | (data << 24);
+    return (data) | (data << 8) | ((data ^ 0xff) << 16) | ((data ^ 0xff) << 24);
 }
