@@ -1,13 +1,21 @@
-/**
- * Copyright (c) 2021 mjcross
- *
- * SPDX-License-Identifier: BSD-3-Clause
- */
 
-#include "pico/stdlib.h"
+#include "hardware/clocks.h" // for clock_get_hz()
 #include "hardware/pio.h"
+#include "pico/stdlib.h"
+#include <map>
+#include <stdio.h>
 
-// public API
+#include "IRReceiver.pio.h"
 
-int IRReceiver_init(PIO pio, uint pin);
-bool nec_decode_frame(uint32_t sm, uint8_t *p_address, uint8_t *p_data);
+class IRReceiver
+{
+public:
+    IRReceiver(PIO pio, uint pin);
+    bool nec_decode_frame(uint32_t sm, uint8_t *p_address, uint8_t *p_data);
+    uint8_t Decode(uint32_t frame);
+    uint32_t Receive();
+
+private:
+    PIO pio;
+    int sm;
+};

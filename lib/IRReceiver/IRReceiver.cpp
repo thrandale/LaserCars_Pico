@@ -1,60 +1,46 @@
-/**
- * Copyright (c) 2021 mjcross
- *
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-// SDK types and declarations
-#include "pico/stdlib.h"
-#include "hardware/pio.h"
-#include "hardware/clocks.h"    // for clock_get_hz()
-
 #include "IRReceiver.h"
 
-// import the assembled PIO state machine program
-#include "IRReceiver.pio.h"
+IRReceiver::IRReceiver(PIO pio, uint pin)
+{
 
-// Claim an unused state machine on the specified PIO and configure it
-// to receive NEC IR frames on the given GPIO pin.
-//
-// Returns: the state machine number on success, otherwise -1
-int IRReceiver_init(PIO pio, uint pin_num) {
+    this->pio = pio;
+    this->sm = -1;
 
     // disable pull-up and pull-down on gpio pin
-    gpio_disable_pulls(pin_num);
+    gpio_disable_pulls(pin);
 
     // install the program in the PIO shared instruction space
     uint offset;
-    if (pio_can_add_program(pio, &IRReceiver_program)) {
+    if (pio_can_add_program(pio, &IRReceiver_program))
+    {
         offset = pio_add_program(pio, &IRReceiver_program);
-    } else {
-        return -1;      // the program could not be added
+    }
+    else
+    {
+        printf("Could not add program");
     }
 
     // claim an unused state machine on this PIO
-    int sm = pio_claim_unused_sm(pio, true);
-    if (sm == -1) {
-        return -1;      // we were unable to claim a state machine
+    sm = pio_claim_unused_sm(pio, true);
+    if (sm == -1)
+    {
+        printf("Could not claim unused SM");
     }
 
     // configure and enable the state machine
-    IRReceiver_program_init(pio, sm, offset, pin_num);
-
-    return sm;
+    IRReceiver_program_init(pio, sm, offset, pin);
 }
 
-
-// Validate a 32-bit frame and store the address and data at the locations
-// provided.
-//
-// Returns: `true` if the frame was valid, otherwise `false`
-bool nec_decode_frame(uint32_t frame, uint8_t *p_address, uint8_t *p_data) {
+bool IRReceiver::nec_decode_frame(uint32_t frame, uint8_t *p_address, uint8_t *p_data)
+{
 
     // access the frame data as four 8-bit fields
     //
-    union {
+    union
+    {
         uint32_t raw;
-        struct {
+        struct
+        {
             uint8_t address;
             uint8_t inverted_address;
             uint8_t data;
@@ -67,7 +53,8 @@ bool nec_decode_frame(uint32_t frame, uint8_t *p_address, uint8_t *p_data) {
     // a valid (non-extended) 'NEC' frame should contain 8 bit
     // address, inverted address, data and inverted data
     if (f.address != (f.inverted_address ^ 0xff) ||
-        f.data != (f.inverted_data ^ 0xff)) {
+        f.data != (f.inverted_data ^ 0xff))
+    {
         return false;
     }
 
@@ -76,4 +63,40 @@ bool nec_decode_frame(uint32_t frame, uint8_t *p_address, uint8_t *p_data) {
     *p_data = f.data;
 
     return true;
+}
+
+uint8_t IRReceiver::Decode(uint32_t frame)
+{
+    std::map<uint8_t, uint8_t> dataMap;
+
+    for (int j = 0; j < 4; j++)
+    {
+        uint8_t data = (frame >> (j * 8)) & 0xFF;
+
+        if (dataMap.find(data) == dataMap.end())
+        {
+            dataMap[data] = 1;
+        }
+        else
+        {
+            dataMap[data]++;
+        }
+
+        if (dataMap[data] >= 3)
+        {
+            return data;
+        }
+    }
+
+    return -1;
+}
+
+uint32_t IRReceiver::Receive()
+{
+    if (!pio_sm_is_rx_fifo_empty(pio, sm))
+    {
+        return pio_sm_get(pio, sm);
+    }
+
+    return -1;
 }
