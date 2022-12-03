@@ -1,4 +1,4 @@
-#include "hardware/clocks.h" // for clock_get_hz()
+#include "hardware/clocks.h"
 #include "hardware/pio.h"
 #include "pico/stdlib.h"
 #include <stdio.h>
@@ -11,8 +11,7 @@
 class IRSender
 {
 public:
-    IRSender(PIO pio, uint pin);
-    uint32_t nec_encode_frame(uint8_t address, uint8_t data);
+    IRSender(PIO pio, uint pin, uint numPins);
     void Send(uint8_t data, uint pin);
 
 private:

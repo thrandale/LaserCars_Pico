@@ -18,7 +18,7 @@ signal_loop_1:
     wait 1 irq BURST_IRQ            ; wait for the IRQ then clear it
 
 cycle_loop_1:
-    set pins 1                      ; set the pin high (1 cycle)
+    set pins 31                     ; set the pin high (1 cycle)
     set pins 0 [1]                  ; set the pin low (2 cycles)
     jmp X-- cycle_loop_1            ; (1 more cycle)
     jmp Y-- signal_loop_1           
@@ -31,7 +31,7 @@ signal_loop_2:
     wait 1 irq BURST_IRQ            ; wait for the IRQ then clear it
 
 cycle_loop_2:
-    set pins 1                      ; set the pin high (1 cycle)
+    set pins 31                     ; set the pin high (1 cycle)
     set pins 0 [1]                  ; set the pin low (2 cycles)
     jmp X-- cycle_loop_2            ; (1 more cycle)
     jmp Y-- signal_loop_2
@@ -40,13 +40,13 @@ cycle_loop_2:
 
 
 % c-sdk {
-static inline void IRSender_burst_program_init(PIO pio, uint sm, uint offset, uint pin, float freq, int bits_per_frame) {
+static inline void IRSender_burst_program_init(PIO pio, uint sm, uint offset, uint pin, uint numPins, float freq, int bits_per_frame) {
     // Create a new state machine configuration
     pio_sm_config c = IRSender_burst_program_get_default_config(offset);
 
     // Map the SET pin group to one pin, namely the `pin`
     // parameter to this function.
-    sm_config_set_set_pins(&c, pin, 1);
+    sm_config_set_set_pins(&c, pin, numPins);
 
     sm_config_set_out_shift(&c,
                         true,       // shift right
@@ -58,7 +58,9 @@ static inline void IRSender_burst_program_init(PIO pio, uint sm, uint offset, ui
 
 
     // Set the GPIO function of the pin(connect the PIO to the pad)
-    pio_gpio_init(pio, pin);
+    for (int i = 0; i < numPins; i++) {
+        pio_gpio_init(pio, pin + i);
+    }
 
     // Set the clock divider to generate the required frequency
     float div = clock_get_hz(clk_sys) / (freq * IRSender_burst_TICKS_PER_LOOP);

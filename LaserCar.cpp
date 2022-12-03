@@ -9,10 +9,8 @@
 void core1_entry()
 {
     PIO pio = pio1;
-    uint rx_gpio = 15;
     uint8_t rx_data = -1;
-
-    IRReceiver receiver(pio, rx_gpio);
+    IRReceiver receiver(pio, 15);
 
     while (true)
     {
@@ -37,13 +35,10 @@ void core1_entry()
 int main()
 {
     stdio_init_all();
-
-    PIO pio = pio0;    // choose which PIO block to use (RP2040 has two: pio0 and pio1)
-    uint tx_gpio = 14; // choose which GPIO pin is connected to the IR LED
-
-    IRSender sender(pio, tx_gpio);
-
     multicore_launch_core1(core1_entry);
+
+    PIO pio = pio0;
+    IRSender sender(pio, 2, 2);
 
     // transmit and receive frames
     uint8_t tx_data = 0x00;
@@ -51,13 +46,13 @@ int main()
     while (true)
     {
         // create a 32-bit frame and add it to the transmit FIFO
+        // alternating between pins 1 and 2 of the sender
         sender.Send(tx_data, pin + 1);
         printf("\nsent: %02x", tx_data);
 
-        // allow time for the frame to be transmitted (optional)
-        sleep_ms(100);
+        sleep_ms(500);
 
-        sleep_ms(900);
+        // increment the data and pin
         tx_data += 1;
         pin = (pin + 1) % 2;
     }

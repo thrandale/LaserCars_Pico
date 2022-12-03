@@ -1,6 +1,6 @@
 #include "IRSender.h"
 
-IRSender::IRSender(PIO pio, uint pin)
+IRSender::IRSender(PIO pio, uint pin, uint numPins)
 {
     this->pio = pio;
     this->controlProgramOffset = -1;
@@ -30,6 +30,7 @@ IRSender::IRSender(PIO pio, uint pin)
                                 burstSM,
                                 burstProgramOffset,
                                 pin,
+                                numPins,
                                 38.222e3, // 38.222 kHz carrier
                                 16);
 
@@ -58,23 +59,20 @@ IRSender::IRSender(PIO pio, uint pin)
                                   32);                 // 32 bits per frame
 }
 
-// Create a frame in `NEC` format from the provided 8-bit address and data
-// Returns: a 32-bit encoded frame
-uint32_t IRSender::nec_encode_frame(uint8_t address, uint8_t data)
-{
-    // a normal 32-bit frame is encoded as address, inverted address, data, inverse data,
-    return address | (address ^ 0xff) << 8 | data << 16 | (data ^ 0xff) << 24;
-}
-
+// Send a frame
+// Data: the 8 bit message
+// Pin: the binary mask of the pins to send on
 void IRSender::Send(uint8_t data, uint pin)
 {
-    uint16_t command = 0xE080 | (1 << (pin - 1));
+    uint16_t command = 0xE080 | pin;
     pio_sm_put_blocking(pio, burstSM, command);
     uint32_t frame = Encode(data);
-    // printf("\nSending frame: %02x %02x %02x %02x", frame & 0xff, (frame >> 8) & 0xff, (frame >> 16) & 0xff, (frame >> 24) & 0xff);
     pio_sm_put_blocking(pio, controlSM, frame);
 }
 
+// Encode a frame
+// Data: the 8 bit message
+// Returns: the 32 bit frame (data, data, inverted data, inverted data)
 uint32_t IRSender::Encode(uint8_t data)
 {
     return (data) | (data << 8) | ((data ^ 0xff) << 16) | ((data ^ 0xff) << 24);

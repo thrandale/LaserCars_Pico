@@ -31,40 +31,9 @@ IRReceiver::IRReceiver(PIO pio, uint pin)
     IRReceiver_program_init(pio, sm, offset, pin);
 }
 
-bool IRReceiver::nec_decode_frame(uint32_t frame, uint8_t *p_address, uint8_t *p_data)
-{
-
-    // access the frame data as four 8-bit fields
-    //
-    union
-    {
-        uint32_t raw;
-        struct
-        {
-            uint8_t address;
-            uint8_t inverted_address;
-            uint8_t data;
-            uint8_t inverted_data;
-        };
-    } f;
-
-    f.raw = frame;
-
-    // a valid (non-extended) 'NEC' frame should contain 8 bit
-    // address, inverted address, data and inverted data
-    if (f.address != (f.inverted_address ^ 0xff) ||
-        f.data != (f.inverted_data ^ 0xff))
-    {
-        return false;
-    }
-
-    // store the validated address and data
-    *p_address = f.address;
-    *p_data = f.data;
-
-    return true;
-}
-
+// Decode a frame
+// returns the data if 3 of the 4 bytes match
+// otherwise returns -1
 uint8_t IRReceiver::Decode(uint32_t frame)
 {
     std::map<uint8_t, uint8_t> dataMap;
@@ -95,6 +64,9 @@ uint8_t IRReceiver::Decode(uint32_t frame)
     return -1;
 }
 
+// Receive a frame
+// checks if there is a frame in the FIFO and returns it
+// otherwise returns -1
 uint32_t IRReceiver::Receive()
 {
     if (!pio_sm_is_rx_fifo_empty(pio, sm))
