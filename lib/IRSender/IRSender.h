@@ -13,7 +13,7 @@ class IRSender
 public:
     IRSender(PIO pio, uint pin);
     uint32_t nec_encode_frame(uint8_t address, uint8_t data);
-    void Send(uint8_t data);
+    void Send(uint8_t data, uint pin);
 
 private:
     PIO pio;

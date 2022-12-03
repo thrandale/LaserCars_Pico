@@ -34,11 +34,6 @@ void core1_entry()
     }
 }
 
-// uint32_t encodeMessage(uint8_t data)
-// {
-//     return (data << 24) | (data << 16) | (data << 8) | data;
-// }
-
 int main()
 {
     stdio_init_all();
@@ -52,10 +47,11 @@ int main()
 
     // transmit and receive frames
     uint8_t tx_data = 0x00;
+    int pin = 0;
     while (true)
     {
         // create a 32-bit frame and add it to the transmit FIFO
-        sender.Send(tx_data);
+        sender.Send(tx_data, pin + 1);
         printf("\nsent: %02x", tx_data);
 
         // allow time for the frame to be transmitted (optional)
@@ -63,5 +59,6 @@ int main()
 
         sleep_ms(900);
         tx_data += 1;
+        pin = (pin + 1) % 2;
     }
 }
