@@ -1,34 +1,48 @@
 #include "IRReceiver.h"
 
-IRReceiver::IRReceiver(PIO pio, uint pin)
+IRReceiver::IRReceiver(PIO pio, uint pins[], int numPins)
 {
 
     this->pio = pio;
-    this->sm = -1;
+    this->numPins = numPins;
 
-    // disable pull-up and pull-down on gpio pin
-    gpio_disable_pulls(pin);
+    for (int i = 0; i < 4; i++)
+    {
+        this->sms[i] = -1;
+    }
+
+    // disable pull-up and pull-down on gpio pins
+    for (int i = 0; i < this->numPins; i++)
+    {
+        gpio_disable_pulls(pins[i]);
+    }
 
     // install the program in the PIO shared instruction space
     uint offset;
-    if (pio_can_add_program(pio, &IRReceiver_program))
+    if (pio_can_add_program(this->pio, &IRReceiver_program))
     {
-        offset = pio_add_program(pio, &IRReceiver_program);
+        offset = pio_add_program(this->pio, &IRReceiver_program);
     }
     else
     {
         printf("Could not add program");
     }
 
-    // claim an unused state machine on this PIO
-    sm = pio_claim_unused_sm(pio, true);
-    if (sm == -1)
+    // claim unused state machines on this PIO
+    for (int i = 0; i < this->numPins; i++)
     {
-        printf("Could not claim unused SM");
+        this->sms[i] = pio_claim_unused_sm(this->pio, true);
+        if (this->sms[i] == -1)
+        {
+            printf("Could not claim unused SM for pin %d", pins[i]);
+        }
     }
 
     // configure and enable the state machine
-    IRReceiver_program_init(pio, sm, offset, pin);
+    for (int i = 0; i < this->numPins; i++)
+    {
+        IRReceiver_program_init(this->pio, this->sms[i], offset, pins[i]);
+    }
 }
 
 // Decode a frame
@@ -67,12 +81,20 @@ uint8_t IRReceiver::Decode(uint32_t frame)
 // Receive a frame
 // checks if there is a frame in the FIFO and returns it
 // otherwise returns -1
-uint32_t IRReceiver::Receive()
+uint32_t *IRReceiver::Receive()
 {
-    if (!pio_sm_is_rx_fifo_empty(pio, sm))
-    {
-        return pio_sm_get(pio, sm);
-    }
+    uint32_t *frames = new uint32_t[this->numPins];
 
-    return -1;
+    for (int i = 0; i < this->numPins; i++)
+    {
+        if (!pio_sm_is_rx_fifo_empty(this->pio, this->sms[i]))
+        {
+            frames[i] = pio_sm_get(this->pio, this->sms[i]);
+        }
+        else
+        {
+            frames[i] = -1;
+        }
+    }
+    return frames;
 }

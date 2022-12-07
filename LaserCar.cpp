@@ -10,25 +10,32 @@ void core1_entry()
 {
     PIO pio = pio1;
     uint8_t rx_data = -1;
-    IRReceiver receiver(pio, 15);
+    uint pins[] = {4, 5};
+    uint numPins = sizeof(pins) / sizeof(pins[0]);
+    IRReceiver receiver(pio, pins, numPins);
 
     while (true)
     {
-        uint32_t rx_frame = receiver.Receive();
-        if (rx_frame != -1)
+        uint32_t *rx_frames = receiver.Receive();
+        for (int i = 0; i < numPins; i++)
         {
-            rx_data = receiver.Decode(rx_frame);
+            if (rx_frames[i] != -1)
+            {
+                rx_data = receiver.Decode(rx_frames[i]);
 
-            if (rx_data != -1)
-            {
-                printf("\treceived: %02x", rx_data);
-                // printf("\treceived: %02x %02x %02x %02x", rx_frame >> 24, (rx_frame >> 16) & 0xff, (rx_frame >> 8) & 0xff, rx_frame & 0xff);
-            }
-            else
-            {
-                printf("\treceived: %08x", rx_frame);
+                if (rx_data != -1)
+                {
+                    printf("\t%d received: %02x", i, rx_data);
+                    // printf("\treceived: %02x %02x %02x %02x", rx_frame >> 24, (rx_frame >> 16) & 0xff, (rx_frame >> 8) & 0xff, rx_frame & 0xff);
+                }
+                else
+                {
+                    printf("\t%d received: %08x", i, rx_frames[i]);
+                }
             }
         }
+
+        delete[] rx_frames;
     }
 }
 

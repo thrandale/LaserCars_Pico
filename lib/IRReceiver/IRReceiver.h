@@ -10,11 +10,12 @@
 class IRReceiver
 {
 public:
-    IRReceiver(PIO pio, uint pin);
+    IRReceiver(PIO pio, uint pins[], int numPins);
     uint8_t Decode(uint32_t frame);
-    uint32_t Receive();
+    uint32_t *Receive();
 
 private:
     PIO pio;
-    int sm;
+    int sms[4];
+    int numPins;
 };
