@@ -10,6 +10,9 @@ project(LaserCar C CXX ASM)
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 
+# Set the board
+set(PICO_BOARD "pico_w")
+
 # Initialize the SDK
 pico_sdk_init()
 
@@ -24,7 +27,9 @@ target_link_libraries(${PROJECT_NAME}
   pico_stdlib
   hardware_pio
   pico_multicore
+  pico_btstack_cyw43
   # Add other libraries here
+	BTController
 	IRSender
   IRReceiver
 )

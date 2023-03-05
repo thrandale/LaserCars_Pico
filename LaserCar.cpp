@@ -1,18 +1,19 @@
 #include "hardware/pio.h"
+#include "pico/cyw43_arch.h"
 #include "pico/multicore.h"
 #include "pico/stdlib.h"
 #include <stdio.h>
 
+#include "BTController.h"
 #include "IRReceiver.h"
 #include "IRSender.h"
 
 void core1_entry()
 {
-    PIO pio = pio1;
     uint8_t rx_data = -1;
     uint pins[] = {4, 5};
     uint numPins = sizeof(pins) / sizeof(pins[0]);
-    IRReceiver receiver(pio, pins, numPins);
+    IRReceiver receiver(pio1, pins, numPins);
 
     while (true)
     {
@@ -26,7 +27,6 @@ void core1_entry()
                 if (rx_data != -1)
                 {
                     printf("\t%d received: %02x", i, rx_data);
-                    // printf("\treceived: %02x %02x %02x %02x", rx_frame >> 24, (rx_frame >> 16) & 0xff, (rx_frame >> 8) & 0xff, rx_frame & 0xff);
                 }
                 else
                 {
@@ -41,26 +41,38 @@ void core1_entry()
 
 int main()
 {
+    // initialize the pico
     stdio_init_all();
+    // initialize the wifi chip
+    cyw43_arch_init();
+
+    // start the second core
     multicore_launch_core1(core1_entry);
 
-    PIO pio = pio0;
-    IRSender sender(pio, 2, 2);
+    // Start the BT controller
+    BTController::Start();
 
-    // transmit and receive frames
+    // initialize the IR sender
+    IRSender sender(pio0, 2, 2);
     uint8_t tx_data = 0x00;
     int pin = 0;
+
     while (true)
     {
+        printf("------------------------\n");
+        // Read the values from the BT controller
+        printf("BT Value 1: %s\n", BTController::GetValue1().c_str());
+        printf("BT Value 2: %s\n", BTController::GetValue2().c_str());
+
         // create a 32-bit frame and add it to the transmit FIFO
         // alternating between pins 1 and 2 of the sender
         sender.Send(tx_data, pin + 1);
-        printf("\nsent: %02x", tx_data);
-
-        sleep_ms(500);
+        printf("Sent IR: %02x\n", tx_data);
 
         // increment the data and pin
         tx_data += 1;
         pin = (pin + 1) % 2;
+
+        sleep_ms(500);
     }
 }
