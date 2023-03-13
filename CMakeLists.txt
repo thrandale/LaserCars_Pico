@@ -29,6 +29,7 @@ target_link_libraries(${PROJECT_NAME}
   pico_multicore
   pico_btstack_cyw43
   # Add other libraries here
+	Drive
 	BTController
 	IRSender
   IRReceiver
