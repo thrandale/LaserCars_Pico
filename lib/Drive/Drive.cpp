@@ -6,6 +6,8 @@ Motor const Drive::MOTORS[] = {
     {6, 7},
     {8, 9}};
 
+const double Drive::DEADZONE = PI / 4;
+
 void Drive::Init()
 {
     for (Motor motor : MOTORS)
@@ -23,8 +25,50 @@ void Drive::Init()
 
 void Drive::Mecanum(double angle, double magnitude, double rotation)
 {
-    double ADPower = magnitude * std::sqrt(2) * 0.5 * (std::sin(angle) + std::cos(angle));
-    double BCPower = magnitude * std::sqrt(2) * 0.5 * (std::sin(angle) - std::cos(angle));
+    double ADPower = 0;
+    double BCPower = 0;
+
+    int closestAngle = std::round(angle / (PI / 4));
+
+    magnitude = magnitude > 0 ? magnitude / 2 + 0.5 : 0;
+    rotation = rotation != 0 ? rotation / 2 + (0.5 * rotation / std::abs(rotation)) : 0;
+
+    switch (closestAngle)
+    {
+    case 0:
+    case 8:
+        ADPower = magnitude;
+        BCPower = -magnitude;
+        break;
+    case 1:
+        ADPower = magnitude;
+        BCPower = 0;
+        break;
+    case 2:
+        ADPower = magnitude;
+        BCPower = magnitude;
+        break;
+    case 3:
+        ADPower = 0;
+        BCPower = magnitude;
+        break;
+    case 4:
+        ADPower = -magnitude;
+        BCPower = magnitude;
+        break;
+    case 5:
+        ADPower = -magnitude;
+        BCPower = 0;
+        break;
+    case 6:
+        ADPower = -magnitude;
+        BCPower = -magnitude;
+        break;
+    case 7:
+        ADPower = 0;
+        BCPower = -magnitude;
+        break;
+    }
 
     // check if turning power will interfere with normal translation
     // check ADPower to see if trying to apply rotation would put motor power over 1.0 or under -1.0

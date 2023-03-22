@@ -2,15 +2,10 @@
 
 int BTController::le_notification_enabled;
 hci_con_handle_t BTController::con_handle;
-uint16_t BTController::counter;
-char BTController::counter_str[10];
-int BTController::counter_str_len;
 btstack_packet_callback_registration_t BTController::hci_event_callback_registration;
 
-async_at_time_worker_t BTController::heartbeat_worker = {.do_work = BTController::heartbeat_handler};
-
-std::string BTController::value1 = "Hello";
-std::string BTController::value2 = "World";
+std::string BTController::mecanumValue = "";
+std::string BTController::tankValue = "";
 
 const uint8_t adv_data[] = {
     // Flags general discoverable
@@ -34,21 +29,18 @@ void BTController::Start()
     // register for ATT event
     att_server_register_packet_handler(packet_handler);
 
-    // set one-shot btstack timer
-    async_context_add_at_time_worker_in_ms(cyw43_arch_async_context(), &heartbeat_worker, HEARTBEAT_PERIOD_MS);
-
     // turn on bluetooth!
     hci_power_control(HCI_POWER_ON);
 }
 
-std::string BTController::GetValue1()
+std::string BTController::GetMecanumValue()
 {
-    return value1;
+    return mecanumValue;
 }
 
-std::string BTController::GetValue2()
+std::string BTController::GetTankValue()
 {
-    return value2;
+    return tankValue;
 }
 
 void BTController::packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size)
@@ -83,61 +75,57 @@ void BTController::packet_handler(uint8_t packet_type, uint16_t channel, uint8_t
     case HCI_EVENT_DISCONNECTION_COMPLETE:
         // called when the connection was closed
         le_notification_enabled = 0;
+        Drive::Stop();
         break;
     case ATT_EVENT_CAN_SEND_NOW:
         // called during att_server_request_can_send_now_event()
-        att_server_notify(con_handle, CUSTOM_CHARACTERISTIC_VALUE_HANDLE, (uint8_t *)counter_str, counter_str_len);
         break;
     default:
         break;
     }
 }
 
-void BTController::heartbeat_handler(async_context_t *context, async_at_time_worker_t *worker)
-{
-    // increment the counter
-    increment();
-
-    // send notification if enabled
-    if (le_notification_enabled)
-    {
-        att_server_request_can_send_now_event(con_handle);
-    }
-
-    // Invert the led
-    static int led_on = true;
-    led_on = !led_on;
-    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, led_on);
-
-    // Restart timer
-    async_context_add_at_time_worker_in_ms(context, &heartbeat_worker, HEARTBEAT_PERIOD_MS);
-}
-
 int BTController::att_write_callback(hci_con_handle_t connection_handle, uint16_t att_handle, uint16_t transaction_mode, uint16_t offset, uint8_t *buffer, uint16_t buffer_size)
 {
+    double angle, magnitude, rotation;
+    char mecanumBuffer[14];
+
     switch (att_handle)
     {
-    case CUSTOM_CHARACTERISTIC_CLIENT_CONFIGURATION_HANDLE:
-        le_notification_enabled = little_endian_read_16(buffer, 0) == GATT_CLIENT_CHARACTERISTICS_CONFIGURATION_NOTIFICATION;
-        con_handle = connection_handle;
-        if (le_notification_enabled)
+    case DRIVE_MECANUM_VALUE_HANDLE:
+        printf("Received mecanum value: %s\n", buffer);
+        memcpy(mecanumBuffer, buffer, 14);
+        mecanumValue = std::string(mecanumBuffer);
+
+        if (mecanumValue.find("stop") != -1)
         {
-            att_server_request_can_send_now_event(con_handle);
+            Drive::Stop();
+            break;
         }
+
+        angle = std::stoi(mecanumValue.substr(0, mecanumValue.find(':')));
+        magnitude = std::stoi(mecanumValue.substr(mecanumValue.find(':') + 1, mecanumValue.find(';')));
+        rotation = std::stoi(mecanumValue.substr(mecanumValue.find(';') + 1, 14));
+
+        Drive::Mecanum(angle / 100, magnitude / 100, rotation / 100);
+
         break;
-    case CUSTOM_CHARACTERISTIC_VALUE_HANDLE:
-        value1 = std::string((char *)buffer);
-        break;
-    case CUSTOM_CHARACTERISTIC_2_VALUE_HANDLE:
-        value2 = std::string((char *)buffer);
+    case DRIVE_TANK_VALUE_HANDLE:
+        printf("Received tank value: %s\n", buffer);
+        tankValue = std::string((char *)buffer);
+
+        if (tankValue.find("stop") != -1)
+        {
+            Drive::Stop();
+            break;
+        }
+
+        magnitude = std::stoi(tankValue.substr(0, tankValue.find(':')));
+        rotation = std::stoi(tankValue.substr(tankValue.find(':') + 1, tankValue.length()));
+
+        Drive::Tank(magnitude / 100, rotation / 100);
+
         break;
     }
     return 0;
-}
-
-void BTController::increment(void)
-{
-    counter++;
-    counter %= 1000;
-    counter_str_len = sprintf(counter_str, "%d", counter);
 }

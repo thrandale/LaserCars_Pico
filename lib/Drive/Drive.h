@@ -5,6 +5,8 @@
 #include <math.h>
 #include <stdio.h>
 
+#define PI 3.14159265358979323846
+
 struct Motor
 {
     uint8_t pin1;
@@ -23,6 +25,7 @@ private:
     static void SetMotor(Motor motor, double power);
 
     static const Motor MOTORS[4];
+    static const double DEADZONE;
 };
 
 #endif

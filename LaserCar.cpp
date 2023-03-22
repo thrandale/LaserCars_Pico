@@ -5,8 +5,11 @@
 #include <stdio.h>
 
 #include "BTController.h"
+#include "Drive.h"
 #include "IRReceiver.h"
 #include "IRSender.h"
+
+#define PI 3.14159265
 
 void core1_entry()
 {
@@ -43,36 +46,15 @@ int main()
 {
     // initialize the pico
     stdio_init_all();
+
     // initialize the wifi chip
     cyw43_arch_init();
 
-    // start the second core
-    multicore_launch_core1(core1_entry);
-
-    // Start the BT controller
+    Drive::Init();
     BTController::Start();
-
-    // initialize the IR sender
-    IRSender sender(pio0, 2, 2);
-    uint8_t tx_data = 0x00;
-    int pin = 0;
 
     while (true)
     {
-        printf("------------------------\n");
-        // Read the values from the BT controller
-        printf("BT Value 1: %s\n", BTController::GetValue1().c_str());
-        printf("BT Value 2: %s\n", BTController::GetValue2().c_str());
-
-        // create a 32-bit frame and add it to the transmit FIFO
-        // alternating between pins 1 and 2 of the sender
-        sender.Send(tx_data, pin + 1);
-        printf("Sent IR: %02x\n", tx_data);
-
-        // increment the data and pin
-        tx_data += 1;
-        pin = (pin + 1) % 2;
-
-        sleep_ms(500);
+        tight_loop_contents();
     }
 }
