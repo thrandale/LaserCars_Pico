@@ -9,8 +9,6 @@
 #include "IRReceiver.h"
 #include "IRSender.h"
 
-#define PI 3.14159265
-
 void core1_entry()
 {
     uint8_t rx_data = -1;

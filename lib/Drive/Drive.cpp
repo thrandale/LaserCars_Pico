@@ -30,9 +30,9 @@ void Drive::Mecanum(double angle, double magnitude, double rotation)
 
     int closestAngle = std::round(angle / (PI / 4));
 
-    magnitude = magnitude > 0 ? magnitude / 2 + 0.5 : 0;
-    rotation = rotation != 0 ? rotation / 2 + (0.5 * rotation / std::abs(rotation)) : 0;
-
+    magnitude = magnitude > 0 ? (magnitude) * (1 - MIN_SPEED) + MIN_SPEED : (magnitude) * (1 - MIN_SPEED) - MIN_SPEED;
+    rotation = rotation != 0 ? (magnitude) * (1 - MIN_SPEED) + MIN_SPEED * rotation / std::abs(rotation) : 0;
+    printf("angle: %f, magnitude: %f, rotation: %f\n", angle, magnitude, rotation);
     switch (closestAngle)
     {
     case 0:

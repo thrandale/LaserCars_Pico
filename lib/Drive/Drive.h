@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #define PI 3.14159265358979323846
+#define MIN_MAGNITUDE 0.3
 
 struct Motor
 {
