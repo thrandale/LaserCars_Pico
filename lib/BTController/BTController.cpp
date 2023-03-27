@@ -4,9 +4,6 @@ int BTController::le_notification_enabled;
 hci_con_handle_t BTController::con_handle;
 btstack_packet_callback_registration_t BTController::hci_event_callback_registration;
 
-std::string BTController::mecanumValue = "";
-std::string BTController::tankValue = "";
-
 const uint8_t adv_data[] = {
     // Flags general discoverable
     0x02, BLUETOOTH_DATA_TYPE_FLAGS, APP_AD_FLAGS,
@@ -31,16 +28,6 @@ void BTController::Start()
 
     // turn on bluetooth!
     hci_power_control(HCI_POWER_ON);
-}
-
-std::string BTController::GetMecanumValue()
-{
-    return mecanumValue;
-}
-
-std::string BTController::GetTankValue()
-{
-    return tankValue;
 }
 
 void BTController::packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size)
@@ -87,45 +74,50 @@ void BTController::packet_handler(uint8_t packet_type, uint16_t channel, uint8_t
 
 int BTController::att_write_callback(hci_con_handle_t connection_handle, uint16_t att_handle, uint16_t transaction_mode, uint16_t offset, uint8_t *buffer, uint16_t buffer_size)
 {
-    double angle, magnitude, rotation;
-    char mecanumBuffer[14];
+    std::string data = std::string((char *)buffer);
+
+    printf("BT Received: %s\n", data.c_str());
 
     switch (att_handle)
     {
-    case DRIVE_MECANUM_VALUE_HANDLE:
-        printf("Received mecanum value: %s\n", buffer);
-        memcpy(mecanumBuffer, buffer, 14);
-        mecanumValue = std::string(mecanumBuffer);
-
-        if (mecanumValue.find("stop") != -1)
+    case DRIVE_VALUE_HANDLE:
+        if (CheckStop(data))
         {
             Drive::Stop();
             break;
         }
 
-        angle = std::stoi(mecanumValue.substr(0, mecanumValue.find(':')));
-        magnitude = std::stoi(mecanumValue.substr(mecanumValue.find(':') + 1, mecanumValue.find(';')));
-        rotation = std::stoi(mecanumValue.substr(mecanumValue.find(';') + 1, 14));
+        double angle = ExtractAngle(data);
+        double magnitude = ExtractMagnitude(data);
+        double rotation = ExtractRotation(data);
 
-        Drive::Mecanum(angle / 100, magnitude / 100, rotation / 100);
-
-        break;
-    case DRIVE_TANK_VALUE_HANDLE:
-        printf("Received tank value: %s\n", buffer);
-        tankValue = std::string((char *)buffer);
-
-        if (tankValue.find("stop") != -1)
-        {
-            Drive::Stop();
-            break;
-        }
-
-        magnitude = std::stoi(tankValue.substr(0, tankValue.find(':')));
-        rotation = std::stoi(tankValue.substr(tankValue.find(':') + 1, tankValue.length()));
-
-        Drive::Tank(magnitude / 100, rotation / 100);
-
+        Drive::Move(angle, magnitude, rotation);
         break;
     }
     return 0;
+}
+
+double BTController::ExtractAngle(std::string data)
+{
+    return (double)std::stoi(data.substr(0, data.find(':'))) / 100;
+}
+
+double BTController::ExtractMagnitude(std::string data)
+{
+    return (double)std::stoi(data.substr(data.find(':') + 1, data.find(';'))) / 100;
+}
+
+double BTController::ExtractRotation(std::string data)
+{
+    std::string rotationStr = data.substr(data.find(';') + 1, data.length());
+    int isRotNegative = rotationStr.find("-");
+    double rotation = isRotNegative != -1
+                          ? std::stoi(rotationStr.substr(isRotNegative, rotationStr.length()))
+                          : std::stoi(rotationStr.substr(0, rotationStr.length()));
+    return rotation / 100;
+}
+
+bool BTController::CheckStop(std::string data)
+{
+    return data.find("stop") != -1;
 }

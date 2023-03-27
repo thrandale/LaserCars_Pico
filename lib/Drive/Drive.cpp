@@ -23,16 +23,21 @@ void Drive::Init()
     }
 }
 
-void Drive::Mecanum(double angle, double magnitude, double rotation)
+void Drive::Move(double angle, double magnitude, double rotation)
 {
     double ADPower = 0;
     double BCPower = 0;
 
+    // scale the magnitude to be between MIN_SPEED and 1
+    magnitude = magnitude > 0
+                    ? (magnitude) * (1 - MIN_SPEED) + MIN_SPEED
+                    : 0;
+    rotation = rotation != 0
+                   ? (rotation) * (1 - MIN_SPEED) + MIN_SPEED * rotation / std::abs(rotation)
+                   : 0;
+
     int closestAngle = std::round(angle / (PI / 4));
 
-    magnitude = magnitude > 0 ? (magnitude) * (1 - MIN_SPEED) + MIN_SPEED : 0;
-    rotation = rotation != 0 ? (rotation) * (1 - MIN_SPEED) + MIN_SPEED * rotation / std::abs(rotation) : 0;
-    printf("angle: %f, magnitude: %f, rotation: %f\n", angle, magnitude, rotation);
     switch (closestAngle)
     {
     case 0:
@@ -70,28 +75,24 @@ void Drive::Mecanum(double angle, double magnitude, double rotation)
         break;
     }
 
-    // check if turning power will interfere with normal translation
-    // check ADPower to see if trying to apply rotation would put motor power over 1.0 or under -1.0
-    double turningScale = std::max(std::abs(ADPower + rotation), std::abs(ADPower - rotation));
-    // check BCPower to see if trying to apply rotation would put motor power over 1.0 or under -1.0
-    turningScale = std::max(turningScale, std::max(std::abs(BCPower + rotation), std::abs(BCPower - rotation)));
+    // make sure the turning scale doesn't go over 1
+    double turningScale = std::max(
+        std::max(
+            std::abs(ADPower + rotation),
+            std::abs(ADPower - rotation)),
+        std::max(
+            std::abs(BCPower + rotation),
+            std::abs(BCPower - rotation)));
 
     // adjust turn power scale correctly
-    if (std::abs(turningScale) < 1.0)
-    {
-        turningScale = 1.0;
-    }
+    turningScale = std::abs(turningScale) < 1 ? 1 : turningScale;
 
-    // set the motors, and divide them by turningScale to make sure none of them go over the top, which would alter the translation angle
+    // set the motors, and divide them by turningScale to make sure none of them go over the top,
+    // which would alter the translation angle
     SetMotor(MOTORS[0], (ADPower + rotation) / turningScale);
     SetMotor(MOTORS[1], (BCPower + rotation) / turningScale);
     SetMotor(MOTORS[2], (BCPower - rotation) / turningScale);
     SetMotor(MOTORS[3], (ADPower - rotation) / turningScale);
-}
-
-void Drive::Tank(double magnitude, double rotation)
-{
-    Mecanum(0, magnitude, rotation);
 }
 
 void Drive::Stop()

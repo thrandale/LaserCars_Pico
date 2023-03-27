@@ -18,8 +18,7 @@ class Drive
 {
 public:
     static void Init();
-    static void Mecanum(double angle, double magnitude, double rotation);
-    static void Tank(double magnitude, double rotation);
+    static void Move(double angle, double magnitude, double rotation);
     static void Stop();
 
 private:

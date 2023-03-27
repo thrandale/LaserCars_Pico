@@ -12,8 +12,7 @@
 #define HEARTBEAT_PERIOD_MS 1000
 
 // clang-format off
-#define DRIVE_MECANUM_VALUE_HANDLE  ATT_CHARACTERISTIC_00000001_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
-#define DRIVE_TANK_VALUE_HANDLE     ATT_CHARACTERISTIC_00000002_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
+#define DRIVE_VALUE_HANDLE  ATT_CHARACTERISTIC_00000001_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
 // clang-format on
 
 extern uint8_t const profile_data[];
@@ -32,12 +31,13 @@ private:
     static void increment();
 
     static btstack_packet_callback_registration_t hci_event_callback_registration;
-
     static int le_notification_enabled;
     static hci_con_handle_t con_handle;
 
-    static std::string mecanumValue;
-    static std::string tankValue;
+    static double ExtractMagnitude(std::string value);
+    static double ExtractRotation(std::string value);
+    static double ExtractAngle(std::string value);
+    static bool CheckStop(std::string value);
 };
 
 #endif
