@@ -74,6 +74,9 @@ void BTController::packet_handler(uint8_t packet_type, uint16_t channel, uint8_t
 
 int BTController::att_write_callback(hci_con_handle_t connection_handle, uint16_t att_handle, uint16_t transaction_mode, uint16_t offset, uint8_t *buffer, uint16_t buffer_size)
 {
+    if (buffer_size == 0)
+        return 0;
+
     std::string data = std::string((char *)buffer);
 
     printf("BT Received: %s\n", data.c_str());
