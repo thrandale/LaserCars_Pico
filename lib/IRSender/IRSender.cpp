@@ -1,5 +1,10 @@
 #include "IRSender.h"
 
+/// @brief Initializes the IR sender
+/// @param pio The PIO instance to use
+/// @param pin The pin to use
+/// @param numPins The number of pins to use
+/// @note The pins will be sequencial starting at the pin specified
 IRSender::IRSender(PIO pio, uint pin, uint numPins)
 {
     this->pio = pio;
@@ -59,9 +64,9 @@ IRSender::IRSender(PIO pio, uint pin, uint numPins)
                                   32);                 // 32 bits per frame
 }
 
-// Send a frame
-// Data: the 8 bit message
-// Pin: the binary mask of the pins to send on
+/// @brief Sends a frame
+/// @param data The data to send (8 bits)
+/// @param pin The pin to send on (binary mask)
 void IRSender::Send(uint8_t data, uint pin)
 {
     uint16_t command = 0xE080 | pin;
@@ -70,9 +75,9 @@ void IRSender::Send(uint8_t data, uint pin)
     pio_sm_put_blocking(pio, controlSM, frame);
 }
 
-// Encode a frame
-// Data: the 8 bit message
-// Returns: the 32 bit frame (data, data, inverted data, inverted data)
+/// @brief Encodes a frame
+/// @param data The data to encode (8 bits)
+/// @return the encoded frame (data, data, inverted data, inverted data)
 uint32_t IRSender::Encode(uint8_t data)
 {
     return (data) | (data << 8) | ((data ^ 0xff) << 16) | ((data ^ 0xff) << 24);

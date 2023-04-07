@@ -1,8 +1,11 @@
 #include "IRReceiver.h"
 
+/// @brief Initializes the IR receiver
+/// @param pio The PIO instance to use
+/// @param pins The pins to use (must be sequential)
+/// @param numPins The number of pins in the pins array
 IRReceiver::IRReceiver(PIO pio, uint pins[], int numPins)
 {
-
     this->pio = pio;
     this->numPins = numPins;
 
@@ -45,9 +48,9 @@ IRReceiver::IRReceiver(PIO pio, uint pins[], int numPins)
     }
 }
 
-// Decode a frame
-// returns the data if 3 of the 4 bytes match
-// otherwise returns -1
+/// @brief Decodes a frame
+/// @param frame The frame to decode
+/// @return the data if 3 of the 4 bytes match, otherwise returns -1
 uint8_t IRReceiver::Decode(uint32_t frame)
 {
     std::map<uint8_t, uint8_t> dataMap;
@@ -78,9 +81,10 @@ uint8_t IRReceiver::Decode(uint32_t frame)
     return -1;
 }
 
-// Receive a frame
-// checks if there is a frame in the FIFO and returns it
-// otherwise returns -1
+/// @brief Receives a frame
+/// @details Checks if there is a frame in the FIFO and returns it, otherwise returns -1
+/// @return an array of frames
+/// @note the array must be deleted by the caller
 uint32_t *IRReceiver::Receive()
 {
     uint32_t *frames = new uint32_t[this->numPins];

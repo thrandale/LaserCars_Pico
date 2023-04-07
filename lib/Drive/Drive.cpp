@@ -8,6 +8,7 @@ Motor const Drive::MOTORS[] = {
 
 const double Drive::DEADZONE = PI / 4;
 
+/// @brief Initializes the drive system
 void Drive::Init()
 {
     for (Motor motor : MOTORS)
@@ -23,6 +24,8 @@ void Drive::Init()
     }
 }
 
+/// @brief Moves the car
+/// @param data The data to move the car with formatted as "angle:magnitude;rotation"
 void Drive::Move(std::string data)
 {
     double ADPower = 0;
@@ -116,6 +119,7 @@ void Drive::Move(std::string data)
     SetMotor(MOTORS[3], (ADPower - rotation) / turningScale);
 }
 
+/// @brief Stops the car
 void Drive::Stop()
 {
     SetMotor(MOTORS[0], 0);
@@ -124,6 +128,9 @@ void Drive::Stop()
     SetMotor(MOTORS[3], 0);
 }
 
+/// @brief Sets the motor to the given power
+/// @param motor The motor to set
+/// @param power The power to set the motor to (between -1 and 1)
 void Drive::SetMotor(Motor motor, double power)
 {
     int pwmValue = (int)(std::abs(power) * 255 * 255);
@@ -145,16 +152,23 @@ void Drive::SetMotor(Motor motor, double power)
     }
 }
 
+/// @brief  Extracts the angle from the data
+/// @param data The data to extract the angle from formatted as "angle:magnitude;rotation"
+/// @return The angle
 double Drive::ExtractAngle(std::string data)
 {
     return (double)std::stoi(data.substr(0, data.find(':'))) / 100;
 }
 
+/// @brief  Extracts the magnitude from the data
+/// @param data The data to extract the magnitude from formatted as "angle:magnitude;rotation"
 double Drive::ExtractMagnitude(std::string data)
 {
     return (double)std::stoi(data.substr(data.find(':') + 1, data.find(';'))) / 100;
 }
 
+/// @brief  Extracts the rotation from the data
+/// @param data The data to extract the rotation from formatted as "angle:magnitude;rotation"
 double Drive::ExtractRotation(std::string data)
 {
     std::string rotationStr = data.substr(data.find(';') + 1, data.length());
@@ -165,6 +179,8 @@ double Drive::ExtractRotation(std::string data)
     return rotation / 100;
 }
 
+/// @brief Checks if the data is a stop command
+/// @param data The data to check if it starts with "stop"
 bool Drive::CheckStop(std::string data)
 {
     return data.find("stop") != -1;

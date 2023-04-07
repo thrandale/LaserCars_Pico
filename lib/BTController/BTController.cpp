@@ -13,6 +13,7 @@ const uint8_t adv_data[] = {
     0x03, BLUETOOTH_DATA_TYPE_COMPLETE_LIST_OF_16_BIT_SERVICE_CLASS_UUIDS, 0x00, 0x00};
 const uint8_t adv_data_len = sizeof(adv_data);
 
+/// @brief Starts the BTController
 void BTController::Start()
 {
     l2cap_init();
