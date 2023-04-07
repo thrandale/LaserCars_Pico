@@ -13,6 +13,8 @@ set(CMAKE_CXX_STANDARD 17)
 # Set the board
 set(PICO_BOARD "pico_w")
 
+set(PICO_CXX_ENABLE_EXCEPTIONS 1)
+
 # Initialize the SDK
 pico_sdk_init()
 
@@ -29,6 +31,7 @@ target_link_libraries(${PROJECT_NAME}
   pico_multicore
   pico_btstack_cyw43
   # Add other libraries here
+	WeaponController
 	Drive
 	BTController
 	IRSender
