@@ -34,10 +34,6 @@ private:
     static int le_notification_enabled;
     static hci_con_handle_t con_handle;
 
-    static double ExtractMagnitude(std::string value);
-    static double ExtractRotation(std::string value);
-    static double ExtractAngle(std::string value);
-    static bool CheckStop(std::string value);
 };
 
 #endif

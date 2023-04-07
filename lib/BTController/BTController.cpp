@@ -84,43 +84,8 @@ int BTController::att_write_callback(hci_con_handle_t connection_handle, uint16_
     switch (att_handle)
     {
     case DRIVE_VALUE_HANDLE:
-        if (CheckStop(data))
-        {
-            Drive::Stop();
-            break;
-        }
-
-        double angle = ExtractAngle(data);
-        double magnitude = ExtractMagnitude(data);
-        double rotation = ExtractRotation(data);
-
-        Drive::Move(angle, magnitude, rotation);
+        Drive::Move(data);
         break;
     }
     return 0;
-}
-
-double BTController::ExtractAngle(std::string data)
-{
-    return (double)std::stoi(data.substr(0, data.find(':'))) / 100;
-}
-
-double BTController::ExtractMagnitude(std::string data)
-{
-    return (double)std::stoi(data.substr(data.find(':') + 1, data.find(';'))) / 100;
-}
-
-double BTController::ExtractRotation(std::string data)
-{
-    std::string rotationStr = data.substr(data.find(';') + 1, data.length());
-    int isRotNegative = rotationStr.find("-");
-    double rotation = isRotNegative != -1
-                          ? std::stoi(rotationStr.substr(isRotNegative, rotationStr.length()))
-                          : std::stoi(rotationStr.substr(0, rotationStr.length()));
-    return rotation / 100;
-}
-
-bool BTController::CheckStop(std::string data)
-{
-    return data.find("stop") != -1;
 }

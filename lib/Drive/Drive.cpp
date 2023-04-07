@@ -23,10 +23,31 @@ void Drive::Init()
     }
 }
 
-void Drive::Move(double angle, double magnitude, double rotation)
+void Drive::Move(std::string data)
 {
     double ADPower = 0;
     double BCPower = 0;
+    double angle = 0;
+    double magnitude = 0;
+    double rotation = 0;
+
+    try
+    {
+        if (CheckStop(data))
+        {
+            Drive::Stop();
+            return;
+        }
+
+        angle = ExtractAngle(data);
+        magnitude = ExtractMagnitude(data);
+        rotation = ExtractRotation(data);
+    }
+    catch (const std::exception &e)
+    {
+        printf("Error: %s\n", e.what());
+        return;
+    }
 
     // scale the magnitude to be between MIN_SPEED and 1
     magnitude = magnitude > 0
@@ -122,4 +143,29 @@ void Drive::SetMotor(Motor motor, double power)
         pwm_set_gpio_level(motor.pin1, 0);
         pwm_set_gpio_level(motor.pin2, pwmValue);
     }
+}
+
+double Drive::ExtractAngle(std::string data)
+{
+    return (double)std::stoi(data.substr(0, data.find(':'))) / 100;
+}
+
+double Drive::ExtractMagnitude(std::string data)
+{
+    return (double)std::stoi(data.substr(data.find(':') + 1, data.find(';'))) / 100;
+}
+
+double Drive::ExtractRotation(std::string data)
+{
+    std::string rotationStr = data.substr(data.find(';') + 1, data.length());
+    int isRotNegative = rotationStr.find("-");
+    double rotation = isRotNegative != -1
+                          ? std::stoi(rotationStr.substr(isRotNegative, rotationStr.length()))
+                          : std::stoi(rotationStr.substr(0, rotationStr.length()));
+    return rotation / 100;
+}
+
+bool Drive::CheckStop(std::string data)
+{
+    return data.find("stop") != -1;
 }
