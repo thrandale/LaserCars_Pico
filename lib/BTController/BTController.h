@@ -12,7 +12,7 @@
 #define HEARTBEAT_PERIOD_MS 1000
 
 // clang-format off
-#define DRIVE_VALUE_HANDLE  ATT_CHARACTERISTIC_00000001_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
+#define DRIVE_VALUE_HANDLE  ATT_CHARACTERISTIC_10000001_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
 // clang-format on
 
 extern uint8_t const profile_data[];
@@ -33,7 +33,6 @@ private:
     static btstack_packet_callback_registration_t hci_event_callback_registration;
     static int le_notification_enabled;
     static hci_con_handle_t con_handle;
-
 };
 
 #endif

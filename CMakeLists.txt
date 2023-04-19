@@ -31,11 +31,12 @@ target_link_libraries(${PROJECT_NAME}
   pico_multicore
   pico_btstack_cyw43
   # Add other libraries here
-	WeaponController
+	FireController
 	Drive
 	BTController
 	IRSender
   IRReceiver
+	WeaponController
 )
 
 # Add other subdirectories here

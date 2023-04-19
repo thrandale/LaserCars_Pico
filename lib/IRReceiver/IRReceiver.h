@@ -10,6 +10,7 @@
 class IRReceiver
 {
 public:
+    IRReceiver();
     IRReceiver(PIO pio, uint pins[], int numPins);
     uint8_t Decode(uint32_t frame);
     uint32_t *Receive();

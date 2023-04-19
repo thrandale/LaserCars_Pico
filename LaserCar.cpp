@@ -9,6 +9,7 @@
 #include "IRReceiver.h"
 #include "IRSender.h"
 
+// Core 1 runs the WeaponController (And subsequently the IR Receiver)
 void core1_entry()
 {
     uint8_t rx_data = -1;
@@ -48,11 +49,31 @@ int main()
     // initialize the wifi chip
     cyw43_arch_init();
 
+    gpio_init(15);
+    gpio_init(16);
+    gpio_init(17);
+    gpio_init(22);
+    gpio_init(26);
+
     Drive::Init();
     BTController::Start();
 
     while (true)
     {
-        tight_loop_contents();
+        for (int i = 0; i < 6; i++)
+        {
+            gpio_put(15, 0);
+            gpio_put(16, 0);
+            gpio_put(17, 0);
+            int pin22 = gpio_get(22);
+            int pin26 = gpio_get(26);
+            printf("22: %d, 26: %d\n", pin22, pin26);
+        }
+
+        gpio_put(15, 1);
+        gpio_put(16, 0);
+        gpio_put(17, 0);
+        gpio_put(22, 0);
+        gpio_put(26, 0);
     }
 }
