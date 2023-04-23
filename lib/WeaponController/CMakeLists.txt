@@ -4,6 +4,7 @@ add_library(WeaponController WeaponController.cpp)
 target_link_libraries(
   WeaponController
   pico_stdlib
+  pico_multicore
   IRReceiver
   hardware_pio
 )
