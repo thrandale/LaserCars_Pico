@@ -1,11 +1,23 @@
 #include "WeaponController.h"
 
-/// @brief Construct a new WeaponController object
-/// @param hitQueue the queue to put hit data in
-/// @param weaponQueue the queue to put weapon data in
-WeaponController::WeaponController(queue_t *hitQueue, queue_t *weaponQueue)
+IRReceiver WeaponController::receiver = IRReceiver(PIO_INSTANCE, receiverPins, NUM_RECEIVER_PINS);
+uint WeaponController::receiverPins[] = {18, 19, 20, 21};
+
+uint8_t *WeaponController::hitData;
+uint8_t *WeaponController::weaponData;
+bool *WeaponController::weaponDataChanged;
+
+uint WeaponController::addressPins[] = {15, 16, 17};
+uint WeaponController::mPlexDataPins[] = {26, 27, 28};
+
+queue_t *WeaponController::hitQueue;
+queue_t *WeaponController::weaponQueue;
+
+/// @brief Initializes the WeaponController
+/// @param hitQueue
+/// @param weaponQueue
+void WeaponController::Init(queue_t *hitQueue, queue_t *weaponQueue)
 {
-    IRReceiver receiver(PIO_INSTANCE, receiverPins, NUM_RECEIVER_PINS);
     hitData = new uint8_t[NUM_RECEIVER_PINS];
     weaponData = new uint8_t[NUM_WEAPONS];
     weaponDataChanged = new bool[NUM_WEAPONS];
@@ -21,22 +33,15 @@ WeaponController::WeaponController(queue_t *hitQueue, queue_t *weaponQueue)
         weaponDataChanged[i] = false;
     }
 
-    this->hitQueue = hitQueue;
-    this->weaponQueue = weaponQueue;
-}
-
-/// @brief Destroy the WeaponController object
-WeaponController::~WeaponController()
-{
-    delete[] hitData;
-    delete[] weaponData;
-    delete[] weaponDataChanged;
+    WeaponController::hitQueue = hitQueue;
+    WeaponController::weaponQueue = weaponQueue;
 }
 
 /// @brief Collects the hit and weapon data and puts it in the appropriate queues
 /// @note This function is non-blocking and should be called from the main loop
 void WeaponController::Run()
 {
+    printf("Collecting data\n");
     CollectHitData();
     CollectWeaponData();
 
@@ -46,7 +51,7 @@ void WeaponController::Run()
         {
             if (weaponDataChanged[i])
             {
-                queue_entry_t entry = {i, weaponData[i]};
+                queue_entry_t entry = {(uint8_t)i, weaponData[i]};
                 if (queue_try_add(weaponQueue, &entry))
                 {
                     weaponDataChanged[i] = false;
@@ -59,7 +64,7 @@ void WeaponController::Run()
     {
         if (hitData[i] != -1)
         {
-            queue_entry_t entry = {i, hitData[i]};
+            queue_entry_t entry = {(uint8_t)i, hitData[i]};
             if (queue_try_add(hitQueue, &entry))
             {
                 hitData[i] = -1;

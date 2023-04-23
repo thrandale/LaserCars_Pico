@@ -8,8 +8,6 @@
 #include "Adafruit_NeoPixel.h"
 #include "BTController.h"
 #include "Drive.h"
-#include "IRReceiver.h"
-#include "IRSender.h"
 #include "WeaponController.h"
 
 queue_t hitQueue;
@@ -18,11 +16,11 @@ queue_t weaponQueue;
 // Core 1 runs the WeaponController (And subsequently the IR Receiver)
 void core1_entry()
 {
-    WeaponController weaponController(&hitQueue, &weaponQueue);
+    WeaponController::Init(&hitQueue, &weaponQueue);
 
     while (true)
     {
-        weaponController.Run();
+        WeaponController::Run();
     }
 }
 
@@ -43,4 +41,9 @@ int main()
 
     Drive::Init();
     BTController::Start();
+
+    while (true)
+    {
+        tight_loop_contents();
+    }
 }

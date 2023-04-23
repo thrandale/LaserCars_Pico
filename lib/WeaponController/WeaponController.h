@@ -1,5 +1,6 @@
 #ifndef WEAPONCONTROLLER_H
 #define WEAPONCONTROLLER_H
+
 #include "IRReceiver.h"
 #include "pico/stdlib.h"
 #include "pico/util/queue.h"
@@ -22,29 +23,27 @@ typedef struct
 class WeaponController
 {
 public:
-    WeaponController(queue_t *hitQueue, queue_t *weaponQueue);
-    ~WeaponController();
-
-    void Run();
+    static void Init(queue_t *hitQueue, queue_t *weaponQueue);
+    static void Run();
 
 private:
-    IRReceiver receiver;
-    uint receiverPins[NUM_RECEIVER_PINS] = {18, 19, 20, 21};
+    static IRReceiver receiver;
+    static uint receiverPins[NUM_RECEIVER_PINS];
 
-    uint8_t *hitData;
-    uint8_t *weaponData;
-    bool *weaponDataChanged;
+    static uint8_t *hitData;
+    static uint8_t *weaponData;
+    static bool *weaponDataChanged;
 
-    uint addressPins[NUM_MPLEX_ADDRESS_PINS] = {15, 16, 17};
-    uint mPlexDataPins[NUM_MPLEX_DATA_PINS] = {26, 27, 28};
+    static uint addressPins[NUM_MPLEX_ADDRESS_PINS];
+    static uint mPlexDataPins[NUM_MPLEX_DATA_PINS];
 
-    uint8_t ReadMPlex(uint8_t address);
+    static uint8_t ReadMPlex(uint8_t address);
 
-    queue_t *hitQueue;
-    queue_t *weaponQueue;
+    static queue_t *hitQueue;
+    static queue_t *weaponQueue;
 
-    void CollectHitData();
-    void CollectWeaponData();
+    static void CollectHitData();
+    static void CollectWeaponData();
 };
 
 #endif
