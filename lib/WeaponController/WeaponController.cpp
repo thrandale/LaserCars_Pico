@@ -41,28 +41,24 @@ void WeaponController::Init(queue_t *hitQueue, queue_t *weaponQueue)
 /// @note This function is non-blocking and should be called from the main loop
 void WeaponController::Run()
 {
-    printf("Collecting data\n");
     CollectHitData();
     CollectWeaponData();
 
-    if (weaponDataChanged)
+    for (int i = 0; i < NUM_WEAPONS; i++)
     {
-        for (int i = 0; i < NUM_WEAPONS; i++)
+        if (weaponDataChanged[i])
         {
-            if (weaponDataChanged[i])
+            queue_entry_t entry = {(uint8_t)i, weaponData[i]};
+            if (queue_try_add(weaponQueue, &entry))
             {
-                queue_entry_t entry = {(uint8_t)i, weaponData[i]};
-                if (queue_try_add(weaponQueue, &entry))
-                {
-                    weaponDataChanged[i] = false;
-                }
+                weaponDataChanged[i] = false;
             }
         }
     }
 
     for (int i = 0; i < NUM_RECEIVER_PINS; i++)
     {
-        if (hitData[i] != -1)
+        if (hitData[i] != (uint8_t)-1)
         {
             queue_entry_t entry = {(uint8_t)i, hitData[i]};
             if (queue_try_add(hitQueue, &entry))
