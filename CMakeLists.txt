@@ -41,7 +41,6 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 # Add other subdirectories here
-add_subdirectory(pico_neopixel)
 add_subdirectory(lib)
 
 # Enable uart output and disable usb output
