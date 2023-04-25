@@ -1,3 +1,5 @@
+# Architecture Information
+
 ## Pins
 
 - 0, 1 - Debug UART (and LEDS)
@@ -10,23 +12,17 @@
 
 ## State Machines
 
-- IRReceiver - 9 commands, 4 state machines
+### pio0
 
-- IRSender Control - 11 commands, 1 state machine
-- IRSender Burst - 16 commands, 1 state machine
-- Pico - 6 commands, 1 state machine
-- Neopixels - 4 commands, 1 state machine
-
-
-pio0
 - IRReceiver - 9 commands, 2 state machines
 - IRSender Burst - 16 commands, 1 state machine
 - Neopixels - 4 commands, 1 state machine
 
-pio1
+### pio1
+
 - IRReceiver - 9 commands, 2 state machines
 - IRSender Control - 11 commands, 1 state machine
-- Pico - 6 commands, 1 state machine
+- Pico spi - 6 commands, 1 state machine
 
 ## Weapon Data Format
 
