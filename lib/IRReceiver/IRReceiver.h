@@ -7,16 +7,27 @@
 
 #include "IRReceiver.pio.h"
 
+#define NUM_RECEIVERS 4
+#define START_PIN 18
+
+#define REC_1_PIO pio0
+#define REC_2_PIO pio1
+
+typedef struct
+{
+    PIO pio;
+    uint pin;
+    uint offset;
+} RecPin;
+
 class IRReceiver
 {
 public:
-    IRReceiver();
-    IRReceiver(PIO pio, uint pins[], int numPins);
-    uint8_t Decode(uint32_t frame);
-    uint32_t *Receive();
+    static void Init();
+    static uint8_t Decode(uint32_t frame);
+    static uint32_t *Receive();
 
 private:
-    PIO pio;
-    int sms[4];
-    int numPins;
+    static int sms[NUM_RECEIVERS];
+    static RecPin pins[NUM_RECEIVERS];
 };

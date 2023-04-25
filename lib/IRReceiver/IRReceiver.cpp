@@ -1,50 +1,51 @@
 #include "IRReceiver.h"
 
+int IRReceiver::sms[4] = {-1, -1, -1, -1};
+RecPin IRReceiver::pins[4];
+
 /// @brief Initializes the IR receiver
-/// @param pio The PIO instance to use
-/// @param pins The pins to use (must be sequential)
-/// @param numPins The number of pins in the pins array
-IRReceiver::IRReceiver(PIO pio, uint pins[], int numPins)
+void IRReceiver::Init()
 {
-    this->pio = pio;
-    this->numPins = numPins;
-
-    for (int i = 0; i < 4; i++)
+    // init the pins
+    for (int i = 0; i < NUM_RECEIVERS; i++)
     {
-        this->sms[i] = -1;
-    }
+        pins[i].pio = i < 2 ? pio0 : pio1;
+        pins[i].pin = START_PIN + i;
 
-    // disable pull-up and pull-down on gpio pins
-    for (int i = 0; i < this->numPins; i++)
-    {
-        gpio_disable_pulls(pins[i]);
+        // disable pull-up and pull-down on gpio pins
+        gpio_disable_pulls(pins[i].pin);
     }
 
     // install the program in the PIO shared instruction space
     uint offset;
-    if (pio_can_add_program(this->pio, &IRReceiver_program))
+    for (int i = 0; i < NUM_RECEIVERS; i += 2)
     {
-        offset = pio_add_program(this->pio, &IRReceiver_program);
-    }
-    else
-    {
-        printf("Could not add program");
+        if (pio_can_add_program(pins[i].pio, &IRReceiver_program))
+        {
+            offset = pio_add_program(pins[i].pio, &IRReceiver_program);
+            pins[i].offset = offset;
+            pins[i + 1].offset = offset;
+        }
+        else
+        {
+            printf("Could not add program");
+        }
     }
 
     // claim unused state machines on this PIO
-    for (int i = 0; i < this->numPins; i++)
+    for (int i = 0; i < NUM_RECEIVERS; i++)
     {
-        this->sms[i] = pio_claim_unused_sm(this->pio, true);
-        if (this->sms[i] == -1)
+        sms[i] = pio_claim_unused_sm(pins[i].pio, true);
+        if (sms[i] == -1)
         {
             printf("Could not claim unused SM for pin %d", pins[i]);
         }
     }
 
     // configure and enable the state machine
-    for (int i = 0; i < this->numPins; i++)
+    for (int i = 0; i < NUM_RECEIVERS; i++)
     {
-        IRReceiver_program_init(this->pio, this->sms[i], offset, pins[i]);
+        IRReceiver_program_init(pins[i].pio, sms[i], pins[i].offset, pins[i].pin);
     }
 }
 
@@ -87,13 +88,13 @@ uint8_t IRReceiver::Decode(uint32_t frame)
 /// @note the array must be deleted by the caller
 uint32_t *IRReceiver::Receive()
 {
-    uint32_t *frames = new uint32_t[this->numPins];
+    uint32_t *frames = new uint32_t[NUM_RECEIVERS];
 
-    for (int i = 0; i < this->numPins; i++)
+    for (int i = 0; i < NUM_RECEIVERS; i++)
     {
-        if (!pio_sm_is_rx_fifo_empty(this->pio, this->sms[i]))
+        if (!pio_sm_is_rx_fifo_empty(pins[i].pio, sms[i]))
         {
-            frames[i] = pio_sm_get(this->pio, this->sms[i]);
+            frames[i] = pio_sm_get(pins[i].pio, sms[i]);
         }
         else
         {

@@ -12,7 +12,6 @@
 #define NUM_WEAPONS 5
 #define LONE_PIN 22
 #define MAX_PLAYERS 32
-#define PIO_INSTANCE pio1
 
 typedef struct
 {
@@ -27,15 +26,12 @@ public:
     static void Run();
 
 private:
-    static IRReceiver receiver;
-    static uint receiverPins[NUM_RECEIVER_PINS];
+    static const uint addressPins[NUM_MPLEX_ADDRESS_PINS];
+    static const uint mPlexDataPins[NUM_MPLEX_DATA_PINS];
 
     static uint8_t *hitData;
     static uint8_t *weaponData;
     static bool *weaponDataChanged;
-
-    static uint addressPins[NUM_MPLEX_ADDRESS_PINS];
-    static uint mPlexDataPins[NUM_MPLEX_DATA_PINS];
 
     static uint8_t ReadMPlex(uint8_t address);
 

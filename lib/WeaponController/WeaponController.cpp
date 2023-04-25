@@ -1,14 +1,11 @@
 #include "WeaponController.h"
 
-IRReceiver WeaponController::receiver = IRReceiver(PIO_INSTANCE, receiverPins, NUM_RECEIVER_PINS);
-uint WeaponController::receiverPins[] = {18, 19, 20, 21};
+const uint WeaponController::addressPins[] = {15, 16, 17};
+const uint WeaponController::mPlexDataPins[] = {26, 27, 28};
 
 uint8_t *WeaponController::hitData;
 uint8_t *WeaponController::weaponData;
 bool *WeaponController::weaponDataChanged;
-
-uint WeaponController::addressPins[] = {15, 16, 17};
-uint WeaponController::mPlexDataPins[] = {26, 27, 28};
 
 queue_t *WeaponController::hitQueue;
 queue_t *WeaponController::weaponQueue;
@@ -18,6 +15,8 @@ queue_t *WeaponController::weaponQueue;
 /// @param weaponQueue
 void WeaponController::Init(queue_t *hitQueue, queue_t *weaponQueue)
 {
+    IRReceiver::Init();
+
     hitData = new uint8_t[NUM_RECEIVER_PINS];
     weaponData = new uint8_t[NUM_WEAPONS];
     weaponDataChanged = new bool[NUM_WEAPONS];
@@ -72,13 +71,13 @@ void WeaponController::Run()
 /// @brief Collects the hit data from the IR receivers
 void WeaponController::CollectHitData()
 {
-    uint32_t *rx_frames = receiver.Receive();
+    uint32_t *rx_frames = IRReceiver::Receive();
     uint8_t rx_data = -1;
     for (int i = 0; i < NUM_RECEIVER_PINS; i++)
     {
         if (rx_frames[i] != -1)
         {
-            rx_data = receiver.Decode(rx_frames[i]);
+            rx_data = IRReceiver::Decode(rx_frames[i]);
 
             if (rx_data != -1 && hitData[i] == -1)
             {
