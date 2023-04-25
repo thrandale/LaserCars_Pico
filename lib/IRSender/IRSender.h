@@ -7,19 +7,21 @@
 #include "IRSender_burst.pio.h"
 #include "IRSender_control.pio.h"
 
+#define START_PIN 10
+#define NUM_PINS 5
+#define BURST_PIO pio0
+#define CONTROL_PIO pio1
+
 // public API
 class IRSender
 {
 public:
-    IRSender(PIO pio, uint pin, uint numPins);
-    void Send(uint8_t data, uint pin);
+    static void Init();
+    static void Send(uint8_t data, uint pin);
 
 private:
-    PIO pio;
-    uint controlProgramOffset;
-    uint burstProgramOffset;
-    int burstSM;
-    int controlSM;
+    static int burstSM;
+    static int controlSM;
 
-    uint32_t Encode(uint8_t data);
+    static uint32_t Encode(uint8_t data);
 };
