@@ -18,7 +18,7 @@ typedef struct
     PIO pio;
     uint pin;
     uint offset;
-} RecPin;
+} RecPin_t;
 
 class IRReceiver
 {
@@ -29,5 +29,5 @@ public:
 
 private:
     static int sms[NUM_RECEIVERS];
-    static RecPin pins[NUM_RECEIVERS];
+    static RecPin_t pins[NUM_RECEIVERS];
 };

@@ -1,7 +1,7 @@
 #include "IRReceiver.h"
 
 int IRReceiver::sms[4] = {-1, -1, -1, -1};
-RecPin IRReceiver::pins[4];
+RecPin_t IRReceiver::pins[4];
 
 /// @brief Initializes the IR receiver on pins 18-21
 void IRReceiver::Init()

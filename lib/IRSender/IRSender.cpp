@@ -31,7 +31,7 @@ void IRSender::Init()
                                 burstSM,
                                 burstProgramOffset,
                                 IR_SEND_START_PIN,
-                                NUM_PINS,
+                                IR_SEND_NUM_PINS,
                                 38.222e3, // 38.222 kHz carrier
                                 16);
 
