@@ -3,14 +3,14 @@
 int IRReceiver::sms[4] = {-1, -1, -1, -1};
 RecPin IRReceiver::pins[4];
 
-/// @brief Initializes the IR receiver
+/// @brief Initializes the IR receiver on pins 18-21
 void IRReceiver::Init()
 {
     // init the pins
     for (int i = 0; i < NUM_RECEIVERS; i++)
     {
         pins[i].pio = i < 2 ? pio0 : pio1;
-        pins[i].pin = START_PIN + i;
+        pins[i].pin = IR_REC_START_PIN + i;
 
         // disable pull-up and pull-down on gpio pins
         gpio_disable_pulls(pins[i].pin);

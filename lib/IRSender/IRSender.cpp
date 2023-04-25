@@ -1,19 +1,13 @@
 #include "IRSender.h"
 
-int IRSender::burstSM;
-int IRSender::controlSM;
+int IRSender::burstSM = -1;
+int IRSender::controlSM = -1;
 
-/// @brief Initializes the IR sender
-/// @param pio The PIO instance to use
-/// @param pin The pin to use
-/// @param numPins The number of pins to use
-/// @note The pins will be sequencial starting at the pin specified
+/// @brief Initializes the IR sender on pins 10-14
 void IRSender::Init()
 {
     uint controlProgramOffset = -1;
     uint burstProgramOffset = -1;
-    burstSM = -1;
-    controlSM = -1;
 
     // install the carrier_burst program in the PIO shared instruction space
     if (pio_can_add_program(BURST_PIO, &IRSender_burst_program))
@@ -36,7 +30,7 @@ void IRSender::Init()
     IRSender_burst_program_init(BURST_PIO,
                                 burstSM,
                                 burstProgramOffset,
-                                START_PIN,
+                                IR_SEND_START_PIN,
                                 NUM_PINS,
                                 38.222e3, // 38.222 kHz carrier
                                 16);

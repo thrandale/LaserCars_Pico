@@ -7,7 +7,7 @@
 #include "IRSender_burst.pio.h"
 #include "IRSender_control.pio.h"
 
-#define START_PIN 10
+#define IR_SEND_START_PIN 10
 #define NUM_PINS 5
 #define BURST_PIO pio0
 #define CONTROL_PIO pio1

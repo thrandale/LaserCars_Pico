@@ -8,7 +8,7 @@
 #include "IRReceiver.pio.h"
 
 #define NUM_RECEIVERS 4
-#define START_PIN 18
+#define IR_REC_START_PIN 18
 
 #define REC_1_PIO pio0
 #define REC_2_PIO pio1
