@@ -66,8 +66,12 @@ void IRSender::Init()
 void IRSender::Send(uint8_t data, uint pin)
 {
     printf("Sending %d on pin %d\n", data, pin);
-    uint16_t command = 0xE080 | pin;
+
+    // set the pin directions
+    uint16_t command = pio_encode_set(pio_pindirs, pin);
     pio_sm_put_blocking(IR_SEND_PIO, burstSM, command);
+
+    // send the frame
     uint32_t frame = Encode(data);
     pio_sm_put_blocking(IR_SEND_PIO, controlSM, frame);
 }
