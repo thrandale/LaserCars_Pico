@@ -1,7 +1,7 @@
 #include "IRReceiver.h"
 
 int IRReceiver::sms[4] = {-1, -1, -1, -1};
-RecPin_t IRReceiver::pins[4];
+uint IRReceiver::pins[4];
 
 /// @brief Initializes the IR receiver on pins 18-21
 void IRReceiver::Init()
@@ -9,33 +9,27 @@ void IRReceiver::Init()
     // init the pins
     for (int i = 0; i < NUM_RECEIVERS; i++)
     {
-        pins[i].pio = i < 2 ? pio0 : pio1;
-        pins[i].pin = IR_REC_START_PIN + i;
+        pins[i] = IR_REC_START_PIN + i;
 
         // disable pull-up and pull-down on gpio pins
-        gpio_disable_pulls(pins[i].pin);
+        gpio_disable_pulls(pins[i]);
     }
 
     // install the program in the PIO shared instruction space
     uint offset;
-    for (int i = 0; i < NUM_RECEIVERS; i += 2)
+    if (pio_can_add_program(IR_REC_PIO, &IRReceiver_program))
     {
-        if (pio_can_add_program(pins[i].pio, &IRReceiver_program))
-        {
-            offset = pio_add_program(pins[i].pio, &IRReceiver_program);
-            pins[i].offset = offset;
-            pins[i + 1].offset = offset;
-        }
-        else
-        {
-            printf("Could not add program");
-        }
+        offset = pio_add_program(IR_REC_PIO, &IRReceiver_program);
+    }
+    else
+    {
+        printf("Could not add program");
     }
 
     // claim unused state machines on this PIO
     for (int i = 0; i < NUM_RECEIVERS; i++)
     {
-        sms[i] = pio_claim_unused_sm(pins[i].pio, true);
+        sms[i] = pio_claim_unused_sm(IR_REC_PIO, true);
         if (sms[i] == -1)
         {
             printf("Could not claim unused SM for pin %d", pins[i]);
@@ -45,7 +39,7 @@ void IRReceiver::Init()
     // configure and enable the state machine
     for (int i = 0; i < NUM_RECEIVERS; i++)
     {
-        IRReceiver_program_init(pins[i].pio, sms[i], pins[i].offset, pins[i].pin);
+        IRReceiver_program_init(IR_REC_PIO, sms[i], offset, pins[i]);
     }
 }
 
@@ -92,9 +86,9 @@ uint32_t *IRReceiver::Receive()
 
     for (int i = 0; i < NUM_RECEIVERS; i++)
     {
-        if (!pio_sm_is_rx_fifo_empty(pins[i].pio, sms[i]))
+        if (!pio_sm_is_rx_fifo_empty(IR_REC_PIO, sms[i]))
         {
-            frames[i] = pio_sm_get(pins[i].pio, sms[i]);
+            frames[i] = pio_sm_get(IR_REC_PIO, sms[i]);
         }
         else
         {

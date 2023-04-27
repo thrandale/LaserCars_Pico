@@ -10,15 +10,7 @@
 #define NUM_RECEIVERS 4
 #define IR_REC_START_PIN 18
 
-#define REC_1_PIO pio0
-#define REC_2_PIO pio1
-
-typedef struct
-{
-    PIO pio;
-    uint pin;
-    uint offset;
-} RecPin_t;
+#define IR_REC_PIO pio0
 
 class IRReceiver
 {
@@ -29,5 +21,5 @@ public:
 
 private:
     static int sms[NUM_RECEIVERS];
-    static RecPin_t pins[NUM_RECEIVERS];
+    static uint pins[NUM_RECEIVERS];
 };

@@ -3,38 +3,29 @@
 .define NUM_CYCLES 21               ; how many carrier cycles to generate
 .define BURST_IRQ 7                 ; which IRQ should trigger a carrier burst
 .define public TICKS_PER_LOOP 4     ; the number of instructions in the loop (for timing)
-.define BURSTS_1 25                 ; half the number of burst per message. (16 + 32 + 1) / 2
-.define BURSTS_2 24                 ; the other half the number of burst per message. (16 + 32 + 1) / 2
+
+; Sends a carrier burst on the pin group specified by the SET pin group
+; the pin group can be set by pushing a setpindirs instruction to the EXEC FIFO
+; autopull must be enabled
 
 .wrap_target
-    pull                            ; pull the data from the FIFO into the OSR
+
+signal_loop:
+    wait 1 irq BURST_IRQ            ; wait for the IRQ then clear it
+    jmp !OSRE set_pindirs           ; check if there is a new instruction to execute
+
+cycle_loop_start:
+    set X (NUM_CYCLES - 1)          ; initialise the loop counter
+
+cycle_loop:
+    set pins 31                     ; set the pin high (1 cycle)
+    set pins 0 [1]                  ; set the pin low (2 cycles)
+    jmp X-- cycle_loop              ; repeat
+    jmp signal_loop                 ; cycles done, go back to waiting for the IRQ
+
+set_pindirs:
     out EXEC 16                     ; execute the instruction from the OSR
-                                    ; this will set the pindirs
-                                    
-    set Y (BURSTS_1 - 1)            ; set the number of bursts to generate
-
-signal_loop_1:
-    set X (NUM_CYCLES - 1)          ; initialise the loop counter
-    wait 1 irq BURST_IRQ            ; wait for the IRQ then clear it
-
-cycle_loop_1:
-    set pins 31                     ; set the pin high (1 cycle)
-    set pins 0 [1]                  ; set the pin low (2 cycles)
-    jmp X-- cycle_loop_1            ; (1 more cycle)
-    jmp Y-- signal_loop_1           
-
-signal_loop_2_start:
-    set Y (BURSTS_2 - 1)            ; set the number of bursts to generate
-    
-signal_loop_2:
-    set X (NUM_CYCLES - 1)          ; initialise the loop counter
-    wait 1 irq BURST_IRQ            ; wait for the IRQ then clear it
-
-cycle_loop_2:
-    set pins 31                     ; set the pin high (1 cycle)
-    set pins 0 [1]                  ; set the pin low (2 cycles)
-    jmp X-- cycle_loop_2            ; (1 more cycle)
-    jmp Y-- signal_loop_2
+    jmp cycle_loop_start            ; start the cycle loop
 
 .wrap  
 
@@ -65,6 +56,9 @@ static inline void IRSender_burst_program_init(PIO pio, uint sm, uint offset, ui
     // Set the clock divider to generate the required frequency
     float div = clock_get_hz(clk_sys) / (freq * IRSender_burst_TICKS_PER_LOOP);
     sm_config_set_clkdiv(&c, div);
+
+    // enable autopull
+    sm_config_set_out_shift(&c, true, true, bits_per_frame);
 
     // Apply the configuration to the state machine
     pio_sm_init(pio, sm, offset, &c);

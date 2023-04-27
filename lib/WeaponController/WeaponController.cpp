@@ -17,11 +17,11 @@ void WeaponController::Init(queue_t *hitQueue, queue_t *weaponQueue)
 {
     IRReceiver::Init();
 
-    hitData = new uint8_t[NUM_RECEIVER_PINS];
+    hitData = new uint8_t[NUM_RECEIVERS];
     weaponData = new uint8_t[NUM_WEAPONS];
     weaponDataChanged = new bool[NUM_WEAPONS];
 
-    for (int i = 0; i < NUM_RECEIVER_PINS; i++)
+    for (int i = 0; i < NUM_RECEIVERS; i++)
     {
         hitData[i] = -1;
     }
@@ -55,7 +55,7 @@ void WeaponController::Run()
         }
     }
 
-    for (int i = 0; i < NUM_RECEIVER_PINS; i++)
+    for (int i = 0; i < NUM_RECEIVERS; i++)
     {
         if (hitData[i] != (uint8_t)-1)
         {
@@ -73,23 +73,23 @@ void WeaponController::CollectHitData()
 {
     uint32_t *rx_frames = IRReceiver::Receive();
     uint8_t rx_data = -1;
-    for (int i = 0; i < NUM_RECEIVER_PINS; i++)
+    for (int i = 0; i < NUM_RECEIVERS; i++)
     {
-        if (rx_frames[i] != -1)
+        if (rx_frames[i] != (uint32_t)-1)
         {
             rx_data = IRReceiver::Decode(rx_frames[i]);
 
-            if (rx_data != -1 && hitData[i] == -1)
+            if (rx_data != (uint8_t)-1 && hitData[i] == (uint8_t)-1)
             {
-                hitData[i] = rx_data;
+                // hitData[i] = rx_data;
+                printf("\tReceiver %d received data: %02x\n", i, rx_data);
             }
-            else if (rx_data == -1)
+            else if (rx_data == (uint8_t)-1)
             {
-                printf("Receiver %d received unknown data: %08x\n", i, rx_frames[i]);
+                printf("\tReceiver %d received unknown data: %08x\n", i, rx_frames[i]);
             }
         }
     }
-
     delete[] rx_frames;
 }
 

@@ -10,20 +10,6 @@
 - 26-28 - Multiplexer Data
 - 22 - Lone Weapon Data Pin
 
-## State Machines
-
-### pio0
-
-- IRReceiver - 9 commands, 2 state machines
-- IRSender Burst - 16 commands, 1 state machine
-- Neopixels - 4 commands, 1 state machine
-
-### pio1
-
-- IRReceiver - 9 commands, 2 state machines
-- IRSender Control - 11 commands, 1 state machine
-- Pico spi - 6 commands, 1 state machine
-
 ## Weapon Data Format
 
 8 bits

@@ -5,7 +5,6 @@
 #include "pico/stdlib.h"
 #include "pico/util/queue.h"
 
-#define NUM_RECEIVER_PINS 4
 #define NUM_MPLEX_ADDRESS_PINS 3
 #define NUM_MPLEX_DATA_PINS 3
 #define NUM_MPLEX_CHANNELS 8

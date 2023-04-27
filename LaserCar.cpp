@@ -8,10 +8,12 @@
 #include "Adafruit_NeoPixel.h"
 #include "BTController.h"
 #include "Drive.h"
+#include "IRSender.h"
 #include "WeaponController.h"
 
 queue_t hitQueue;
 queue_t weaponQueue;
+queue_t sendQueue;
 
 // Core 1 runs the WeaponController (And subsequently the IR Receiver)
 void core1_entry()
@@ -41,9 +43,25 @@ int main()
 
     Drive::Init();
     BTController::Start();
+    IRSender::Init();
+    Adafruit_NeoPixel pixels(3, 15);
+    pixels.begin();
 
+    uint32_t colors[3] = {pixels.Color(255, 0, 0), pixels.Color(0, 255, 0), pixels.Color(0, 0, 255)};
+    int colorIndex = 0;
+
+    uint8_t counter = 0;
     while (true)
     {
-        tight_loop_contents();
+        for (int i = 0; i < 3; i++)
+        {
+            pixels.setPixelColor(i, colors[(i + colorIndex) % 3]);
+        }
+        pixels.show();
+        colorIndex++;
+
+        IRSender::Send(counter, 1);
+        counter++;
+        sleep_ms(1000);
     }
 }
