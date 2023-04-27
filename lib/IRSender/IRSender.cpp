@@ -62,16 +62,16 @@ void IRSender::Init()
 
 /// @brief Sends a frame
 /// @param data The data to send (8 bits)
-/// @param pin The pin to send on (binary mask)
-void IRSender::Send(uint8_t data, uint pin)
+/// @param side The side to send the data on (0-4)
+void IRSender::Send(uint8_t data, uint side)
 {
-    printf("Sending %d on pin %d\n", data, pin);
+    printf("Sending %d on side %d\n", data, side);
 
     // set the pin directions
-    uint16_t command = pio_encode_set(pio_pindirs, pin);
+    uint16_t command = pio_encode_set(pio_pindirs, 1 << side);
     pio_sm_put_blocking(IR_SEND_PIO, burstSM, command);
 
-    // send the frame
+    //
     uint32_t frame = Encode(data);
     pio_sm_put_blocking(IR_SEND_PIO, controlSM, frame);
 }

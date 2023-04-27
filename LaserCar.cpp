@@ -51,6 +51,7 @@ int main()
     int colorIndex = 0;
 
     uint8_t counter = 0;
+    int side = 0;
     while (true)
     {
         for (int i = 0; i < 3; i++)
@@ -60,8 +61,10 @@ int main()
         pixels.show();
         colorIndex++;
 
-        IRSender::Send(counter, 1);
+        IRSender::Send(counter, side);
         counter++;
-        sleep_ms(1000);
+        side = (side + 1) % 4;
+
+        sleep_ms(500);
     }
 }
