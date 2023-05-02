@@ -17,6 +17,19 @@
 - 0-5 - Car
 - 6-8 - Side
 
+## BLE
+
+- Game Service - 00000000-6a5c-4ebb-8da6-a4471e0965ef
+  - Game Start - 00000001-6a5c-4ebb-8da6-a4471e0965ef
+  - Game End - 00000002-6a5c-4ebb-8da6-a4471e0965ef
+  - You Died - 00000003-6a5c-4ebb-8da6-a4471e0965ef
+- Driving Service - 10000000-6a5c-4ebb-8da6-a4471e0965ef
+  - Driving - 10000001-6a5c-4ebb-8da6-a4471e0965ef
+- Weapons Service - 20000000-6a5c-4ebb-8da6-a4471e0965ef
+  - Weapon Info - 20000001-6a5c-4ebb-8da6-a4471e0965ef
+  - Fire Weapon(s) - 20000002-6a5c-4ebb-8da6-a4471e0965ef
+  - Hit - 20000003-6a5c-4ebb-8da6-a4471e0965ef
+
 # Game Modes
 
 ## Free for all
