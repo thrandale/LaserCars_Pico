@@ -16,7 +16,7 @@ class IRSender
 {
 public:
     static void Init();
-    static void Send(uint8_t data, uint pin);
+    static void Send(uint8_t data, uint8_t sides);
 
 private:
     static int burstSM;
