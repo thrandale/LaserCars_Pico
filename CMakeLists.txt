@@ -32,12 +32,15 @@ target_link_libraries(${PROJECT_NAME}
   pico_btstack_cyw43
   pico_neopixel
   # Add other libraries here
-	FireController
-	Drive
-	BTController
-	IRSender
+  HitAnimation
+  Animation
+  LightController
+  FireController
+  Drive
+  BTController
+  IRSender
   IRReceiver
-	WeaponController
+  WeaponController
 )
 
 # Add other subdirectories here

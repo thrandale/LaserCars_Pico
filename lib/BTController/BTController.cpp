@@ -64,6 +64,11 @@ void BTController::packet_handler(uint8_t packet_type, uint16_t channel, uint8_t
         // called when the connection was closed
         le_notification_enabled = 0;
         Drive::Stop();
+        LightController::PlayConnecting();
+        break;
+    case ATT_EVENT_CONNECTED:
+        printf("ATT_EVENT_CONNECTED\n");
+        LightController::PlayConnected();
         break;
     case ATT_EVENT_CAN_SEND_NOW:
         // called during att_server_request_can_send_now_event()

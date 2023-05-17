@@ -9,6 +9,7 @@ target_link_libraries(BTController
     pico_cyw43_arch_none
     hardware_adc
     Drive
+    LightController
     )
 
 target_include_directories (BTController PUBLIC

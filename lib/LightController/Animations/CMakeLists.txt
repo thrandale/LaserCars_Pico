@@ -1,0 +1,5 @@
+add_subdirectory(Animation)
+add_subdirectory(HitAnimation)
+add_subdirectory(ConnectingAnimation)
+add_subdirectory(ConnectedAnimation)
+add_subdirectory(DeathAnimation)

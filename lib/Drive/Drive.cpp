@@ -6,8 +6,6 @@ Motor const Drive::MOTORS[] = {
     {6, 7},
     {8, 9}};
 
-const double Drive::DEADZONE = PI / 4;
-
 /// @brief Initializes the drive system
 void Drive::Init()
 {

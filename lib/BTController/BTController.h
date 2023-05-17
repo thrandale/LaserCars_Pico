@@ -2,6 +2,7 @@
 #define BTCONTROLLER_H
 
 #include "Drive.h"
+#include "LightController.h"
 #include "btstack.h"
 #include "laser_car.h"
 #include "pico/cyw43_arch.h"
