@@ -15,7 +15,7 @@ struct Motor
     uint8_t pin2;
 };
 
-class Drive
+class DriveController
 {
 public:
     static void Init();

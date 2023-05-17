@@ -1,5 +1,10 @@
 # Architecture Information
 
+## Constants for later
+
+PI - Drive, Animation
+NUM_WEAPONS - FireController, WeaponController
+
 ## Pins
 
 - 0, 1 - Debug UART (and LEDS)

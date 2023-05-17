@@ -11,8 +11,8 @@ void FireController::Init()
     IRSender::Init();
 
     // initialize the weapon data
-    weaponData = new uint8_t[NUM_WEAPONS];
-    for (int i = 0; i < NUM_WEAPONS; i++)
+    weaponData = new uint8_t[FIRE_NUM_WEAPONS];
+    for (int i = 0; i < FIRE_NUM_WEAPONS; i++)
     {
         weaponData[i] = 0;
     }
@@ -50,7 +50,7 @@ void FireController::UpdateWeapon(int weapon, uint8_t weaponData)
 void FireController::Fire(int *sides, int numSides)
 {
     // keeps track of which sides have been sent
-    bool *hasBeenSent = new bool[NUM_WEAPONS];
+    bool *hasBeenSent = new bool[FIRE_NUM_WEAPONS];
 
     // iterate through the sides to shoot
     for (int i = 0; i < numSides; i++)

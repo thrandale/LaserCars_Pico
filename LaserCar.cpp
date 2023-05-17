@@ -7,8 +7,8 @@
 
 #include "Adafruit_NeoPixel.h"
 #include "BTController.h"
-#include "Drive.h"
-#include "IRSender.h"
+#include "DriveController.h"
+#include "FireController.h"
 #include "LightController.h"
 #include "WeaponController.h"
 
@@ -42,14 +42,13 @@ int main()
     // Start the second core
     multicore_launch_core1(core1_entry);
 
-    Drive::Init();
     BTController::Start();
-    IRSender::Init();
-
+    DriveController::Init();
+    FireController::Init();
     LightController::Init();
-    
+
     while (true)
     {
-        LightController::Run();
+        // LightController::Run();
     }
 }

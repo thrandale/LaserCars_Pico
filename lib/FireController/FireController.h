@@ -4,7 +4,7 @@
 #include "pico/stdlib.h"
 
 #define NULL_SIDE 0b111
-#define NUM_WEAPONS IR_SEND_NUM_PINS
+#define FIRE_NUM_WEAPONS IR_SEND_NUM_PINS
 
 class FireController
 {

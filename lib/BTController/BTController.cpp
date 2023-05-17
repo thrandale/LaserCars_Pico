@@ -63,11 +63,10 @@ void BTController::packet_handler(uint8_t packet_type, uint16_t channel, uint8_t
     case HCI_EVENT_DISCONNECTION_COMPLETE:
         // called when the connection was closed
         le_notification_enabled = 0;
-        Drive::Stop();
+        DriveController::Stop();
         LightController::PlayConnecting();
         break;
     case ATT_EVENT_CONNECTED:
-        printf("ATT_EVENT_CONNECTED\n");
         LightController::PlayConnected();
         break;
     case ATT_EVENT_CAN_SEND_NOW:
@@ -82,16 +81,19 @@ int BTController::att_write_callback(hci_con_handle_t connection_handle, uint16_
 {
     if (buffer_size == 0)
         return 0;
-
-    std::string data = std::string((char *)buffer);
+    std::string data = std::string((char *)buffer, buffer_size);
 
     printf("BT Received: %s\n", data.c_str());
 
     switch (att_handle)
     {
     case DRIVE_VALUE_HANDLE:
-        Drive::Move(data);
+        DriveController::Move(data);
+        break;
+    case FIRE_VALUE_HANDLE:
+        printf("FIRE: %s\n", data.c_str());
         break;
     }
+
     return 0;
 }

@@ -36,7 +36,7 @@ target_link_libraries(${PROJECT_NAME}
   Animation
   LightController
   FireController
-  Drive
+  DriveController
   BTController
   IRSender
   IRReceiver

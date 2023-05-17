@@ -1,7 +1,7 @@
 #ifndef BTCONTROLLER_H
 #define BTCONTROLLER_H
 
-#include "Drive.h"
+#include "DriveController.h"
 #include "LightController.h"
 #include "btstack.h"
 #include "laser_car.h"
@@ -14,6 +14,7 @@
 
 // clang-format off
 #define DRIVE_VALUE_HANDLE  ATT_CHARACTERISTIC_10000001_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
+#define FIRE_VALUE_HANDLE   ATT_CHARACTERISTIC_20000002_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
 // clang-format on
 
 extern uint8_t const profile_data[];

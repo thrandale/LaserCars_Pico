@@ -1,13 +1,13 @@
-#include "Drive.h"
+#include "DriveController.h"
 
-Motor const Drive::MOTORS[] = {
+Motor const DriveController::MOTORS[] = {
     {2, 3},
     {4, 5},
     {6, 7},
     {8, 9}};
 
 /// @brief Initializes the drive system
-void Drive::Init()
+void DriveController::Init()
 {
     for (Motor motor : MOTORS)
     {
@@ -24,7 +24,7 @@ void Drive::Init()
 
 /// @brief Moves the car
 /// @param data The data to move the car with formatted as "angle:magnitude;rotation"
-void Drive::Move(std::string data)
+void DriveController::Move(std::string data)
 {
     double ADPower = 0;
     double BCPower = 0;
@@ -36,7 +36,7 @@ void Drive::Move(std::string data)
     {
         if (CheckStop(data))
         {
-            Drive::Stop();
+            DriveController::Stop();
             return;
         }
 
@@ -118,7 +118,7 @@ void Drive::Move(std::string data)
 }
 
 /// @brief Stops the car
-void Drive::Stop()
+void DriveController::Stop()
 {
     SetMotor(MOTORS[0], 0);
     SetMotor(MOTORS[1], 0);
@@ -129,7 +129,7 @@ void Drive::Stop()
 /// @brief Sets the motor to the given power
 /// @param motor The motor to set
 /// @param power The power to set the motor to (between -1 and 1)
-void Drive::SetMotor(Motor motor, double power)
+void DriveController::SetMotor(Motor motor, double power)
 {
     int pwmValue = (int)(std::abs(power) * 255 * 255);
 
@@ -153,21 +153,21 @@ void Drive::SetMotor(Motor motor, double power)
 /// @brief  Extracts the angle from the data
 /// @param data The data to extract the angle from formatted as "angle:magnitude;rotation"
 /// @return The angle
-double Drive::ExtractAngle(std::string data)
+double DriveController::ExtractAngle(std::string data)
 {
     return (double)std::stoi(data.substr(0, data.find(':'))) / 100;
 }
 
 /// @brief  Extracts the magnitude from the data
 /// @param data The data to extract the magnitude from formatted as "angle:magnitude;rotation"
-double Drive::ExtractMagnitude(std::string data)
+double DriveController::ExtractMagnitude(std::string data)
 {
     return (double)std::stoi(data.substr(data.find(':') + 1, data.find(';'))) / 100;
 }
 
 /// @brief  Extracts the rotation from the data
 /// @param data The data to extract the rotation from formatted as "angle:magnitude;rotation"
-double Drive::ExtractRotation(std::string data)
+double DriveController::ExtractRotation(std::string data)
 {
     std::string rotationStr = data.substr(data.find(';') + 1, data.length());
     int isRotNegative = rotationStr.find("-");
@@ -179,7 +179,7 @@ double Drive::ExtractRotation(std::string data)
 
 /// @brief Checks if the data is a stop command
 /// @param data The data to check if it starts with "stop"
-bool Drive::CheckStop(std::string data)
+bool DriveController::CheckStop(std::string data)
 {
     return data.find("stop") != -1;
 }
