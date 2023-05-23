@@ -3,13 +3,10 @@
 #include "pico/stdlib.h"
 #include <stdio.h>
 
+#include "Constants.h"
 // import the assembled PIO state machine programs
 #include "IRSender_burst.pio.h"
 #include "IRSender_control.pio.h"
-
-#define IR_SEND_START_PIN 10
-#define IR_SEND_NUM_PINS 5
-#define IR_SEND_PIO pio1
 
 // public API
 class IRSender

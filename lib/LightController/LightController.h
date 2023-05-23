@@ -10,11 +10,11 @@
 #include "Animation.h"
 #include "ConnectedAnimation.h"
 #include "ConnectingAnimation.h"
+#include "Constants.h"
 #include "DeathAnimation.h"
 #include "HitAnimation.h"
 
 #define NUM_LIGHTS 8
-#define LIGHT_PIN 1
 #define NUM_ZONES 3
 
 enum Zone

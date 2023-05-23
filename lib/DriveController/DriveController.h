@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <string>
 
+#include "Constants.h"
+
 #define MIN_SPEED 0.3
 
 struct Motor
@@ -26,7 +28,6 @@ private:
     static void SetMotor(Motor motor, double power);
 
     static const std::array<Motor, 4> MOTORS;
-    static const double DEADZONE;
 
     static double ExtractMagnitude(std::string value);
     static double ExtractRotation(std::string value);

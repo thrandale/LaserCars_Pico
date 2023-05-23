@@ -9,5 +9,5 @@ ConnectingAnimation::ConnectingAnimation() : Animation()
 
 double ConnectingAnimation::GetFrame(int frame)
 {
-    return std::abs(std::sin(((double)frame / (double)numFrames) * ANIMATION_PI));
+    return std::abs(std::sin(((double)frame / (double)numFrames) * M_PI));
 }

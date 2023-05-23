@@ -1,7 +1,7 @@
 #include "WeaponController.h"
 
-const std::array<uint, NUM_MPLEX_ADDRESS_PINS> WeaponController::addressPins = {15, 16, 17};
-const std::array<uint, NUM_MPLEX_DATA_PINS> WeaponController::mPlexDataPins = {26, 27, 28};
+const std::array<uint, NUM_MPLEX_ADDRESS_PINS> WeaponController::addressPins = PIN_MPLEX_ADDRESSES;
+const std::array<uint, NUM_MPLEX_DATA_PINS> WeaponController::mPlexDataPins = PIN_MPLEX_DATA;
 
 std::array<uint8_t, NUM_RECEIVERS> WeaponController::hitData;
 std::array<uint8_t, NUM_WEAPONS> WeaponController::weaponData;
@@ -90,7 +90,7 @@ void WeaponController::CollectWeaponData()
     {
         collectedData |= ReadMPlex(i) << (i * NUM_MPLEX_DATA_PINS);
     }
-    collectedData |= gpio_get(LONE_PIN) << (NUM_MPLEX_CHANNELS * NUM_MPLEX_DATA_PINS);
+    collectedData |= gpio_get(PIN_LONE_WEAPON_DATA) << (NUM_MPLEX_CHANNELS * NUM_MPLEX_DATA_PINS);
 
     for (int i = 0; i < NUM_WEAPONS; i++)
     {

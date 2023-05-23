@@ -24,6 +24,9 @@ add_executable(${PROJECT_NAME} ${PROJECT_NAME}.cpp)
 # Create map/bin/hex/uf2 files
 pico_add_extra_outputs(${PROJECT_NAME})
 
+# To get the Constants.h file
+include_directories(lib)
+
 # Link any libraries here
 target_link_libraries(${PROJECT_NAME}
   pico_stdlib

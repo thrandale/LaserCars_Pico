@@ -5,14 +5,12 @@
 #include "pico/util/queue.h"
 #include <array>
 
+#include "Constants.h"
 #include "IRReceiver.h"
 
 #define NUM_MPLEX_ADDRESS_PINS 3
 #define NUM_MPLEX_DATA_PINS 3
 #define NUM_MPLEX_CHANNELS 8
-#define NUM_WEAPONS 5
-#define LONE_PIN 22
-#define MAX_PLAYERS 32
 
 typedef struct
 {

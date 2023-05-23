@@ -1,6 +1,6 @@
 #include "FireController.h"
 
-std::array<uint8_t, FIRE_NUM_WEAPONS> FireController::weaponData;
+std::array<uint8_t, NUM_WEAPONS> FireController::weaponData;
 bool FireController::isInGame;
 uint8_t FireController::carId;
 
@@ -46,7 +46,7 @@ void FireController::UpdateWeapon(int weapon, uint8_t weaponData)
 void FireController::Fire(int *sides, int numSides)
 {
     // keeps track of which sides have been sent
-    std::array<bool, FIRE_NUM_WEAPONS> hasBeenSent;
+    std::array<bool, NUM_WEAPONS> hasBeenSent;
     hasBeenSent.fill(false);
 
     // iterate through the sides to shoot
@@ -84,9 +84,9 @@ void FireController::HandleBTData(std::string data)
     uint8_t sides = std::stoi(data);
 
     // fire on the sides
-    int sidesToFire[FIRE_NUM_WEAPONS];
+    int sidesToFire[NUM_WEAPONS];
     int numSides = 0;
-    for (int i = 0; i < FIRE_NUM_WEAPONS; i++)
+    for (int i = 0; i < NUM_WEAPONS; i++)
     {
         if (sides & (1 << i))
         {

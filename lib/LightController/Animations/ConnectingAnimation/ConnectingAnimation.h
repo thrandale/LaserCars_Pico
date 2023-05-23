@@ -4,8 +4,6 @@
 #include "math.h"
 #include "pico/stdlib.h"
 
-#define ANIMATION_PI 3.14159265
-
 class ConnectingAnimation : public Animation
 {
 public:

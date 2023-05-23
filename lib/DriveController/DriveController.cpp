@@ -1,10 +1,10 @@
 #include "DriveController.h"
 
 std::array<Motor, 4> const DriveController::MOTORS = {
-    Motor{2, 3},
-    Motor{4, 5},
-    Motor{6, 7},
-    Motor{8, 9}};
+    Motor{PIN_MOTOR_0_0, PIN_MOTOR_0_1},
+    Motor{PIN_MOTOR_1_0, PIN_MOTOR_1_1},
+    Motor{PIN_MOTOR_2_0, PIN_MOTOR_2_1},
+    Motor{PIN_MOTOR_3_0, PIN_MOTOR_3_1}};
 
 /// @brief Initializes the drive system
 void DriveController::Init()

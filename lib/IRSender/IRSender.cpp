@@ -10,9 +10,9 @@ void IRSender::Init()
     uint burstProgramOffset = -1;
 
     // install the carrier_burst program in the PIO shared instruction space
-    if (pio_can_add_program(IR_SEND_PIO, &IRSender_burst_program))
+    if (pio_can_add_program(PIO_IR_SEND, &IRSender_burst_program))
     {
-        burstProgramOffset = pio_add_program(IR_SEND_PIO, &IRSender_burst_program);
+        burstProgramOffset = pio_add_program(PIO_IR_SEND, &IRSender_burst_program);
     }
     else
     {
@@ -20,25 +20,25 @@ void IRSender::Init()
     }
 
     // claim an unused state machine on this PIO
-    burstSM = pio_claim_unused_sm(IR_SEND_PIO, true);
+    burstSM = pio_claim_unused_sm(PIO_IR_SEND, true);
     if (burstSM == -1)
     {
         printf("Could not claim unused SM for burst");
     }
 
     // configure and enable the state machine
-    IRSender_burst_program_init(IR_SEND_PIO,
+    IRSender_burst_program_init(PIO_IR_SEND,
                                 burstSM,
                                 burstProgramOffset,
-                                IR_SEND_START_PIN,
-                                IR_SEND_NUM_PINS,
+                                PIN_IR_SEND_START,
+                                NUM_WEAPONS,
                                 38.222e3, // 38.222 kHz carrier
                                 16);
 
     // install the carrier_control program in the PIO shared instruction space
-    if (pio_can_add_program(IR_SEND_PIO, &IRSender_control_program))
+    if (pio_can_add_program(PIO_IR_SEND, &IRSender_control_program))
     {
-        controlProgramOffset = pio_add_program(IR_SEND_PIO, &IRSender_control_program);
+        controlProgramOffset = pio_add_program(PIO_IR_SEND, &IRSender_control_program);
     }
     else
     {
@@ -46,14 +46,14 @@ void IRSender::Init()
     }
 
     // claim an unused state machine on this PIO
-    controlSM = pio_claim_unused_sm(IR_SEND_PIO, true);
+    controlSM = pio_claim_unused_sm(PIO_IR_SEND, true);
     if (controlSM == -1)
     {
         printf("Could not claim unused SM for control");
     }
 
     // configure and enable the state machine
-    IRSender_control_program_init(IR_SEND_PIO,
+    IRSender_control_program_init(PIO_IR_SEND,
                                   controlSM,
                                   controlProgramOffset,
                                   2 * (1 / 562.5e-6f), // 2 ticks per 562.5us carrier burst
@@ -69,11 +69,11 @@ void IRSender::Send(uint8_t data, uint8_t sides)
 
     // set the pin directions
     uint16_t command = pio_encode_set(pio_pindirs, sides);
-    pio_sm_put_blocking(IR_SEND_PIO, burstSM, command);
+    pio_sm_put_blocking(PIO_IR_SEND, burstSM, command);
 
     //
     uint32_t frame = Encode(data);
-    pio_sm_put_blocking(IR_SEND_PIO, controlSM, frame);
+    pio_sm_put_blocking(PIO_IR_SEND, controlSM, frame);
 }
 
 /// @brief Encodes a frame

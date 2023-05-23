@@ -7,6 +7,7 @@
 
 #include "Adafruit_NeoPixel.h"
 #include "BTController.h"
+#include "Constants.h"
 #include "DriveController.h"
 #include "FireController.h"
 #include "LightController.h"

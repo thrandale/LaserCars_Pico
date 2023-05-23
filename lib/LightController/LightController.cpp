@@ -19,7 +19,7 @@ double LightController::brightness = 1;
 
 void LightController::Init()
 {
-    pixels = Adafruit_NeoPixel(NUM_LIGHTS, LIGHT_PIN);
+    pixels = Adafruit_NeoPixel(NUM_LIGHTS, PIN_NEOPIXELS);
 
     r.fill(0);
     g.fill(0);

@@ -9,7 +9,7 @@ void IRReceiver::Init()
     // init the pins
     for (int i = 0; i < NUM_RECEIVERS; i++)
     {
-        pins[i] = IR_REC_START_PIN + i;
+        pins[i] = PIN_IR_REC_START + i;
 
         // disable pull-up and pull-down on gpio pins
         gpio_disable_pulls(pins[i]);
@@ -17,9 +17,9 @@ void IRReceiver::Init()
 
     // install the program in the PIO shared instruction space
     uint offset;
-    if (pio_can_add_program(IR_REC_PIO, &IRReceiver_program))
+    if (pio_can_add_program(PIO_IR_REC, &IRReceiver_program))
     {
-        offset = pio_add_program(IR_REC_PIO, &IRReceiver_program);
+        offset = pio_add_program(PIO_IR_REC, &IRReceiver_program);
     }
     else
     {
@@ -29,7 +29,7 @@ void IRReceiver::Init()
     // claim unused state machines on this PIO
     for (int i = 0; i < NUM_RECEIVERS; i++)
     {
-        sms[i] = pio_claim_unused_sm(IR_REC_PIO, true);
+        sms[i] = pio_claim_unused_sm(PIO_IR_REC, true);
         if (sms[i] == -1)
         {
             printf("Could not claim unused SM for pin %d", pins[i]);
@@ -39,7 +39,7 @@ void IRReceiver::Init()
     // configure and enable the state machine
     for (int i = 0; i < NUM_RECEIVERS; i++)
     {
-        IRReceiver_program_init(IR_REC_PIO, sms[i], offset, pins[i]);
+        IRReceiver_program_init(PIO_IR_REC, sms[i], offset, pins[i]);
     }
 }
 
@@ -86,9 +86,9 @@ std::array<uint32_t, NUM_RECEIVERS> IRReceiver::Receive()
 
     for (int i = 0; i < NUM_RECEIVERS; i++)
     {
-        if (!pio_sm_is_rx_fifo_empty(IR_REC_PIO, sms[i]))
+        if (!pio_sm_is_rx_fifo_empty(PIO_IR_REC, sms[i]))
         {
-            frames[i] = pio_sm_get(IR_REC_PIO, sms[i]);
+            frames[i] = pio_sm_get(PIO_IR_REC, sms[i]);
         }
         else
         {

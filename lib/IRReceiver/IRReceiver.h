@@ -1,4 +1,3 @@
-
 #include "hardware/clocks.h"
 #include "hardware/pio.h"
 #include "pico/stdlib.h"
@@ -6,12 +5,8 @@
 #include <map>
 #include <stdio.h>
 
+#include "Constants.h"
 #include "IRReceiver.pio.h"
-
-#define NUM_RECEIVERS 4
-#define IR_REC_START_PIN 18
-
-#define IR_REC_PIO pio0
 
 class IRReceiver
 {
