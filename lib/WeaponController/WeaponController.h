@@ -1,9 +1,11 @@
 #ifndef WEAPONCONTROLLER_H
 #define WEAPONCONTROLLER_H
 
-#include "IRReceiver.h"
 #include "pico/stdlib.h"
 #include "pico/util/queue.h"
+#include <array>
+
+#include "IRReceiver.h"
 
 #define NUM_MPLEX_ADDRESS_PINS 3
 #define NUM_MPLEX_DATA_PINS 3
@@ -25,12 +27,12 @@ public:
     static void Run();
 
 private:
-    static const uint addressPins[NUM_MPLEX_ADDRESS_PINS];
-    static const uint mPlexDataPins[NUM_MPLEX_DATA_PINS];
+    static const std::array<uint, NUM_MPLEX_ADDRESS_PINS> addressPins;
+    static const std::array<uint, NUM_MPLEX_DATA_PINS> mPlexDataPins;
 
-    static uint8_t *hitData;
-    static uint8_t *weaponData;
-    static bool *weaponDataChanged;
+    static std::array<uint8_t, NUM_RECEIVERS> hitData;
+    static std::array<uint8_t, NUM_WEAPONS> weaponData;
+    static std::array<bool, NUM_WEAPONS> weaponDataChanged;
 
     static uint8_t ReadMPlex(uint8_t address);
 

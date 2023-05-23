@@ -1,14 +1,17 @@
 #ifndef LIGHTCONTROLLER_H
 #define LIGHTCONTROLLER_H
+
+#include "pico/stdlib.h"
+#include "pico/time.h"
+#include <array>
+#include <stdio.h>
+
 #include "Adafruit_NeoPixel.h"
 #include "Animation.h"
 #include "ConnectedAnimation.h"
 #include "ConnectingAnimation.h"
 #include "DeathAnimation.h"
 #include "HitAnimation.h"
-#include "pico/stdlib.h"
-#include "pico/time.h"
-#include <stdio.h>
 
 #define NUM_LIGHTS 8
 #define LIGHT_PIN 1
@@ -49,11 +52,11 @@ private:
     static ConnectingAnimation connectingAnimation;
     static ConnectedAnimation connectedAnimation;
 
-    static uint8_t r[NUM_ZONES];
-    static uint8_t g[NUM_ZONES];
-    static uint8_t b[NUM_ZONES];
+    static std::array<uint8_t, NUM_ZONES> r;
+    static std::array<uint8_t, NUM_ZONES> g;
+    static std::array<uint8_t, NUM_ZONES> b;
 
-    static bool changed[NUM_ZONES];
+    static std::array<bool, NUM_ZONES> changed;
     static double brightness;
 
     static void StartAnimation();

@@ -10,17 +10,21 @@ DeathAnimation LightController::deathAnimation;
 ConnectingAnimation LightController::connectingAnimation;
 ConnectedAnimation LightController::connectedAnimation;
 
-uint8_t LightController::r[NUM_ZONES] = {0, 0, 0};
-uint8_t LightController::g[NUM_ZONES] = {0, 0, 0};
-uint8_t LightController::b[NUM_ZONES] = {0, 0, 0};
+std::array<uint8_t, NUM_ZONES> LightController::r;
+std::array<uint8_t, NUM_ZONES> LightController::g;
+std::array<uint8_t, NUM_ZONES> LightController::b;
 
-bool LightController::changed[NUM_ZONES] = {false, false, false};
+std::array<bool, NUM_ZONES> LightController::changed;
 double LightController::brightness = 1;
 
 void LightController::Init()
 {
-    Adafruit_NeoPixel pix(NUM_LIGHTS, LIGHT_PIN);
-    pixels = pix;
+    pixels = Adafruit_NeoPixel(NUM_LIGHTS, LIGHT_PIN);
+
+    r.fill(0);
+    g.fill(0);
+    b.fill(0);
+    changed.fill(false);
 
     timeOfLastFrame = 0;
     currentAnimation = nullptr;

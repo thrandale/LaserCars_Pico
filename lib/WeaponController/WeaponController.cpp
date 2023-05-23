@@ -1,11 +1,11 @@
 #include "WeaponController.h"
 
-const uint WeaponController::addressPins[] = {15, 16, 17};
-const uint WeaponController::mPlexDataPins[] = {26, 27, 28};
+const std::array<uint, NUM_MPLEX_ADDRESS_PINS> WeaponController::addressPins = {15, 16, 17};
+const std::array<uint, NUM_MPLEX_DATA_PINS> WeaponController::mPlexDataPins = {26, 27, 28};
 
-uint8_t *WeaponController::hitData;
-uint8_t *WeaponController::weaponData;
-bool *WeaponController::weaponDataChanged;
+std::array<uint8_t, NUM_RECEIVERS> WeaponController::hitData;
+std::array<uint8_t, NUM_WEAPONS> WeaponController::weaponData;
+std::array<bool, NUM_WEAPONS> WeaponController::weaponDataChanged;
 
 queue_t *WeaponController::hitQueue;
 queue_t *WeaponController::weaponQueue;
@@ -17,20 +17,9 @@ void WeaponController::Init(queue_t *hitQueue, queue_t *weaponQueue)
 {
     IRReceiver::Init();
 
-    hitData = new uint8_t[NUM_RECEIVERS];
-    weaponData = new uint8_t[NUM_WEAPONS];
-    weaponDataChanged = new bool[NUM_WEAPONS];
-
-    for (int i = 0; i < NUM_RECEIVERS; i++)
-    {
-        hitData[i] = -1;
-    }
-
-    for (int i = 0; i < NUM_WEAPONS; i++)
-    {
-        weaponData[i] = -1;
-        weaponDataChanged[i] = false;
-    }
+    hitData.fill(-1);
+    weaponData.fill(-1);
+    weaponDataChanged.fill(false);
 
     WeaponController::hitQueue = hitQueue;
     WeaponController::weaponQueue = weaponQueue;
@@ -71,7 +60,7 @@ void WeaponController::Run()
 /// @brief Collects the hit data from the IR receivers
 void WeaponController::CollectHitData()
 {
-    uint32_t *rx_frames = IRReceiver::Receive();
+    std::array<uint32_t, NUM_RECEIVERS> rx_frames = IRReceiver::Receive();
     uint8_t rx_data = -1;
     for (int i = 0; i < NUM_RECEIVERS; i++)
     {
@@ -90,7 +79,6 @@ void WeaponController::CollectHitData()
             }
         }
     }
-    delete[] rx_frames;
 }
 
 /// @brief Collects the weapon data from the multiplexers

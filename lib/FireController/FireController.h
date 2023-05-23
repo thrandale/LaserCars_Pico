@@ -1,7 +1,11 @@
 #ifndef FIRECONTROLLER_H
 #define FIRECONTROLLER_H
-#include "IRSender.h"
+
 #include "pico/stdlib.h"
+#include <array>
+#include <string>
+
+#include "IRSender.h"
 
 #define NULL_SIDE 0b111
 #define FIRE_NUM_WEAPONS IR_SEND_NUM_PINS
@@ -16,8 +20,10 @@ public:
 
     static void Fire(int *sides, int numSides);
 
+    static void HandleBTData(std::string data);
+
 private:
-    static uint8_t *weaponData;
+    static std::array<uint8_t, FIRE_NUM_WEAPONS> weaponData;
     static bool isInGame;
     static uint8_t carId;
 

@@ -1,10 +1,10 @@
 #include "DriveController.h"
 
-Motor const DriveController::MOTORS[] = {
-    {2, 3},
-    {4, 5},
-    {6, 7},
-    {8, 9}};
+std::array<Motor, 4> const DriveController::MOTORS = {
+    Motor{2, 3},
+    Motor{4, 5},
+    Motor{6, 7},
+    Motor{8, 9}};
 
 /// @brief Initializes the drive system
 void DriveController::Init()
@@ -58,7 +58,7 @@ void DriveController::Move(std::string data)
                    ? (rotation) * (1 - MIN_SPEED) + MIN_SPEED * rotation / std::abs(rotation)
                    : 0;
 
-    int closestAngle = std::round(angle / (PI / 4));
+    int closestAngle = std::round(angle / (M_PI / 4));
 
     switch (closestAngle)
     {

@@ -2,11 +2,11 @@
 #define DRIVE_H
 #include "hardware/pwm.h"
 #include "pico/stdlib.h"
+#include <array>
 #include <math.h>
 #include <stdio.h>
 #include <string>
 
-#define PI 3.14159265358979323846
 #define MIN_SPEED 0.3
 
 struct Motor
@@ -25,7 +25,7 @@ public:
 private:
     static void SetMotor(Motor motor, double power);
 
-    static const Motor MOTORS[4];
+    static const std::array<Motor, 4> MOTORS;
     static const double DEADZONE;
 
     static double ExtractMagnitude(std::string value);

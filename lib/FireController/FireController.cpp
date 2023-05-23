@@ -1,6 +1,6 @@
 #include "FireController.h"
 
-uint8_t *FireController::weaponData;
+std::array<uint8_t, FIRE_NUM_WEAPONS> FireController::weaponData;
 bool FireController::isInGame;
 uint8_t FireController::carId;
 
@@ -11,11 +11,7 @@ void FireController::Init()
     IRSender::Init();
 
     // initialize the weapon data
-    weaponData = new uint8_t[FIRE_NUM_WEAPONS];
-    for (int i = 0; i < FIRE_NUM_WEAPONS; i++)
-    {
-        weaponData[i] = 0;
-    }
+    weaponData.fill(0);
 
     carId = 0;
     isInGame = false;
@@ -50,7 +46,8 @@ void FireController::UpdateWeapon(int weapon, uint8_t weaponData)
 void FireController::Fire(int *sides, int numSides)
 {
     // keeps track of which sides have been sent
-    bool *hasBeenSent = new bool[FIRE_NUM_WEAPONS];
+    std::array<bool, FIRE_NUM_WEAPONS> hasBeenSent;
+    hasBeenSent.fill(false);
 
     // iterate through the sides to shoot
     for (int i = 0; i < numSides; i++)
@@ -76,6 +73,28 @@ void FireController::Fire(int *sides, int numSides)
         IRSender::Send(EncodeData(sides[i]), sidesToSend);
         hasBeenSent[i] = true;
     }
+}
+
+/// @brief Handles the data received from the BT module and fires the weapon(s)
+/// @param data The data received (as a 5 bit bit mask)
+void FireController::HandleBTData(std::string data)
+{
+    printf("Fire data: %s\n", data.c_str());
+    // decode the data
+    uint8_t sides = std::stoi(data);
+
+    // fire on the sides
+    int sidesToFire[FIRE_NUM_WEAPONS];
+    int numSides = 0;
+    for (int i = 0; i < FIRE_NUM_WEAPONS; i++)
+    {
+        if (sides & (1 << i))
+        {
+            sidesToFire[numSides++] = i;
+        }
+    }
+
+    Fire(sidesToFire, numSides);
 }
 
 /// @brief Encodes the data to be sent by the weapon(s)
