@@ -79,7 +79,6 @@ uint8_t IRReceiver::Decode(uint32_t frame)
 /// @brief Receives a frame
 /// @details Checks if there is a frame in the FIFO and returns it, otherwise returns -1
 /// @return an array of frames
-/// @note the array must be deleted by the caller
 std::array<uint32_t, NUM_RECEIVERS> IRReceiver::Receive()
 {
     std::array<uint32_t, NUM_RECEIVERS> frames;
