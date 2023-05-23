@@ -24,6 +24,7 @@ void core1_entry()
     while (true)
     {
         WeaponController::Run();
+        sleep_ms(10);
     }
 }
 

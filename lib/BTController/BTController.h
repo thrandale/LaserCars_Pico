@@ -1,13 +1,15 @@
 #ifndef BTCONTROLLER_H
 #define BTCONTROLLER_H
 
-#include "DriveController.h"
-#include "LightController.h"
 #include "btstack.h"
 #include "laser_car.h"
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
 #include <string>
+
+#include "DriveController.h"
+#include "FireController.h"
+#include "LightController.h"
 
 #define APP_AD_FLAGS 0x06
 #define HEARTBEAT_PERIOD_MS 1000

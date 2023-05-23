@@ -10,7 +10,8 @@ target_link_libraries(BTController
     hardware_adc
     DriveController
     LightController
-    )
+    FireController
+)
 
 target_include_directories (BTController PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}

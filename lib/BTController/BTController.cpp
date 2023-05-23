@@ -91,7 +91,7 @@ int BTController::att_write_callback(hci_con_handle_t connection_handle, uint16_
         DriveController::Move(data);
         break;
     case FIRE_VALUE_HANDLE:
-        printf("FIRE: %s\n", data.c_str());
+        FireController::HandleBTData(data);
         break;
     }
 
