@@ -70,7 +70,7 @@ void WeaponController::CollectHitData()
 
             if (rx_data != (uint8_t)-1 && hitData[i] == (uint8_t)-1)
             {
-                // hitData[i] = rx_data;
+                hitData[i] = rx_data;
                 printf("\tReceiver %d received data: %02x\n", i, rx_data);
             }
             else if (rx_data == (uint8_t)-1)

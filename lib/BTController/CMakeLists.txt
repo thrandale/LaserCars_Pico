@@ -11,6 +11,7 @@ target_link_libraries(BTController
     DriveController
     LightController
     FireController
+    WeaponController
 )
 
 target_include_directories (BTController PUBLIC

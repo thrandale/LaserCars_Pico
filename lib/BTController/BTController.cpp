@@ -1,7 +1,7 @@
 #include "BTController.h"
 
-int BTController::le_notification_enabled;
-hci_con_handle_t BTController::con_handle;
+int BTController::hit_notification_enabled;
+hci_con_handle_t BTController::hit_con_handle;
 btstack_packet_callback_registration_t BTController::hci_event_callback_registration;
 
 const uint8_t adv_data[] = {
@@ -29,6 +29,16 @@ void BTController::Start()
 
     // turn on bluetooth!
     hci_power_control(HCI_POWER_ON);
+}
+
+void BTController::NotifyHit(queue_entry_t hitEntry)
+{
+    if (!hit_notification_enabled)
+        return;
+
+    uint8_t data = hitEntry.side << sizeof(hitEntry.data) | hitEntry.data;
+
+    att_server_notify(hit_con_handle, HIT_VALUE_HANDLE, &data, sizeof(data));
 }
 
 void BTController::packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size)
@@ -62,7 +72,7 @@ void BTController::packet_handler(uint8_t packet_type, uint16_t channel, uint8_t
         break;
     case HCI_EVENT_DISCONNECTION_COMPLETE:
         // called when the connection was closed
-        le_notification_enabled = 0;
+        hit_notification_enabled = 0;
         DriveController::Stop();
         LightController::PlayConnecting();
         break;
@@ -81,6 +91,7 @@ int BTController::att_write_callback(hci_con_handle_t connection_handle, uint16_
 {
     if (buffer_size == 0)
         return 0;
+
     std::string data = std::string((char *)buffer, buffer_size);
 
     printf("BT Received: %s\n", data.c_str());
@@ -92,6 +103,10 @@ int BTController::att_write_callback(hci_con_handle_t connection_handle, uint16_
         break;
     case FIRE_VALUE_HANDLE:
         FireController::HandleBTData(data);
+        break;
+    case HIT_CLIENT_HANDLE:
+        hit_notification_enabled = little_endian_read_16(buffer, 0) == GATT_CLIENT_CHARACTERISTICS_CONFIGURATION_NOTIFICATION;
+        hit_con_handle = connection_handle;
         break;
     }
 

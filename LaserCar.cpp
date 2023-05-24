@@ -52,5 +52,12 @@ int main()
     while (true)
     {
         // LightController::Run();
+
+        // receive hits
+        queue_entry_t hitEntry;
+        while (queue_try_remove(&hitQueue, &hitEntry))
+        {
+            BTController::NotifyHit(hitEntry);
+        }
     }
 }
