@@ -16,10 +16,14 @@
 #define HEARTBEAT_PERIOD_MS 1000
 
 // clang-format off
-#define DRIVE_VALUE_HANDLE  ATT_CHARACTERISTIC_10000001_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
-#define FIRE_VALUE_HANDLE   ATT_CHARACTERISTIC_20000002_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
-#define HIT_CLIENT_HANDLE   ATT_CHARACTERISTIC_20000003_6a5c_4ebb_8da6_a4471e0965ef_01_CLIENT_CONFIGURATION_HANDLE
-#define HIT_VALUE_HANDLE    ATT_CHARACTERISTIC_20000003_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
+#define DRIVE_VALUE_HANDLE   ATT_CHARACTERISTIC_10000001_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
+#define WEAPON_CLIENT_HANDLE ATT_CHARACTERISTIC_20000001_6a5c_4ebb_8da6_a4471e0965ef_01_CLIENT_CONFIGURATION_HANDLE
+#define WEAPON_VALUE_HANDLE  ATT_CHARACTERISTIC_20000001_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
+#define FIRE_VALUE_HANDLE    ATT_CHARACTERISTIC_20000002_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
+#define HIT_CLIENT_HANDLE    ATT_CHARACTERISTIC_20000003_6a5c_4ebb_8da6_a4471e0965ef_01_CLIENT_CONFIGURATION_HANDLE
+#define HIT_VALUE_HANDLE     ATT_CHARACTERISTIC_20000003_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
+#define LED_SET_ZONE_HANDLE  ATT_CHARACTERISTIC_30000001_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
+#define LED_PLAY_ANIM_HANDLE ATT_CHARACTERISTIC_30000002_6a5c_4ebb_8da6_a4471e0965ef_01_VALUE_HANDLE
 // clang-format on
 
 extern uint8_t const profile_data[];
@@ -30,6 +34,7 @@ public:
     static void Start();
 
     static void NotifyHit(queue_entry_t hitEntry);
+    static void NotifyWeaponData(queue_entry_t weaponEntry);
 
 private:
     static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
@@ -37,7 +42,9 @@ private:
 
     static btstack_packet_callback_registration_t hci_event_callback_registration;
     static int hit_notification_enabled;
+    static int weapon_notification_enabled;
     static hci_con_handle_t hit_con_handle;
+    static hci_con_handle_t weapon_con_handle;
 };
 
 #endif

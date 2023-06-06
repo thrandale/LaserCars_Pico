@@ -1,7 +1,9 @@
 #include "BTController.h"
 
 int BTController::hit_notification_enabled;
+int BTController::weapon_notification_enabled;
 hci_con_handle_t BTController::hit_con_handle;
+hci_con_handle_t BTController::weapon_con_handle;
 btstack_packet_callback_registration_t BTController::hci_event_callback_registration;
 
 const uint8_t adv_data[] = {
@@ -36,9 +38,18 @@ void BTController::NotifyHit(queue_entry_t hitEntry)
     if (!hit_notification_enabled)
         return;
 
-    uint8_t data = hitEntry.side << sizeof(hitEntry.data) | hitEntry.data;
+    uint16_t data = hitEntry.side << 8 | hitEntry.data;
 
-    att_server_notify(hit_con_handle, HIT_VALUE_HANDLE, &data, sizeof(data));
+    att_server_notify(hit_con_handle, HIT_VALUE_HANDLE, (uint8_t *)&data, sizeof(data));
+}
+
+void BTController::NotifyWeaponData(queue_entry_t weaponEntry)
+{
+    if (!weapon_notification_enabled)
+        return;
+    uint8_t data = weaponEntry.side << 5 | weaponEntry.data;
+
+    att_server_notify(weapon_con_handle, WEAPON_VALUE_HANDLE, &data, sizeof(data));
 }
 
 void BTController::packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size)
@@ -104,9 +115,19 @@ int BTController::att_write_callback(hci_con_handle_t connection_handle, uint16_
     case FIRE_VALUE_HANDLE:
         FireController::HandleBTData(data);
         break;
+    case WEAPON_CLIENT_HANDLE:
+        weapon_notification_enabled = little_endian_read_16(buffer, 0) == GATT_CLIENT_CHARACTERISTICS_CONFIGURATION_NOTIFICATION;
+        weapon_con_handle = connection_handle;
+        break;
     case HIT_CLIENT_HANDLE:
         hit_notification_enabled = little_endian_read_16(buffer, 0) == GATT_CLIENT_CHARACTERISTICS_CONFIGURATION_NOTIFICATION;
         hit_con_handle = connection_handle;
+        break;
+    case LED_SET_ZONE_HANDLE:
+        LightController::HandleBTSetZone(data);
+        break;
+    case LED_PLAY_ANIM_HANDLE:
+        LightController::HandleBTPlayAnim(data);
         break;
     }
 

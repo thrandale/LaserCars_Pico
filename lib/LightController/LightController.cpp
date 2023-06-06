@@ -10,6 +10,8 @@ DeathAnimation LightController::deathAnimation;
 ConnectingAnimation LightController::connectingAnimation;
 ConnectedAnimation LightController::connectedAnimation;
 
+std::map<int, FunctionPtr> LightController::animations = {{0, &PlayHit}, {1, &PlayDeath}};
+
 std::array<uint8_t, NUM_ZONES> LightController::r;
 std::array<uint8_t, NUM_ZONES> LightController::g;
 std::array<uint8_t, NUM_ZONES> LightController::b;
@@ -152,6 +154,44 @@ void LightController::Run()
     if (didChange)
     {
         pixels.show();
+    }
+}
+
+void LightController::HandleBTSetZone(std::string data)
+{
+    // convert the data to hex
+    try
+    {
+        uint8_t zone = std::stoi(data.substr(0, 1), nullptr, 16);
+        uint8_t r = std::stoi(data.substr(1, 2), nullptr, 16);
+        uint8_t g = std::stoi(data.substr(3, 2), nullptr, 16);
+        uint8_t b = std::stoi(data.substr(5, 2), nullptr, 16);
+
+        LightController::SetColor(r, g, b, (Zone)zone);
+    }
+    catch (const std::exception &e)
+    {
+        printf("Error: %s\n", e.what());
+        return;
+    }
+}
+
+void LightController::HandleBTPlayAnim(std::string data)
+{
+    printf("Playing animation %s\n", data.c_str());
+    int animation = std::stoi(data);
+
+    try
+    {
+        if (animations.find(animation) != animations.end())
+        {
+            animations[animation]();
+        }
+    }
+    catch (const std::exception &e)
+    {
+        printf("Error: %s\n", e.what());
+        return;
     }
 }
 

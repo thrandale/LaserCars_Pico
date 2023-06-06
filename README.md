@@ -34,6 +34,9 @@ NUM_WEAPONS - FireController, WeaponController
   - Weapon Info - 20000001-6a5c-4ebb-8da6-a4471e0965ef
   - Fire Weapon(s) - 20000002-6a5c-4ebb-8da6-a4471e0965ef
   - Hit - 20000003-6a5c-4ebb-8da6-a4471e0965ef
+- Lights Service - 30000000-6a5c-4ebb-8da6-a4471e0965ef
+  - Set Zone Color - 30000001-6a5c-4ebb-8da6-a4471e0965ef
+  - Play Animation - 30000002-6a5c-4ebb-8da6-a4471e0965ef
 
 # Game Modes
 

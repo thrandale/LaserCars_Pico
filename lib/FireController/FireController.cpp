@@ -13,8 +13,8 @@ void FireController::Init()
     // initialize the weapon data
     weaponData.fill(0);
 
-    carId = 0;
-    isInGame = false;
+    carId = 1;
+    isInGame = true;
 }
 
 /// @brief Joins the game
@@ -82,6 +82,7 @@ void FireController::HandleBTData(std::string data)
     printf("Fire data: %s\n", data.c_str());
     // decode the data
     uint8_t sides = std::stoi(data);
+    printf("Sides: %d\n", sides);
 
     // fire on the sides
     int sidesToFire[NUM_WEAPONS];
@@ -92,6 +93,11 @@ void FireController::HandleBTData(std::string data)
         {
             sidesToFire[numSides++] = i;
         }
+    }
+    printf("Sides to fire: ");
+    for (int i = 0; i < numSides; i++)
+    {
+        printf("%d ", sidesToFire[i]);
     }
 
     Fire(sidesToFire, numSides);

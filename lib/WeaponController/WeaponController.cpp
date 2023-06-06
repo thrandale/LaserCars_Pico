@@ -1,5 +1,5 @@
 #include "WeaponController.h"
-
+#include <cstdlib>
 const std::array<uint, NUM_MPLEX_ADDRESS_PINS> WeaponController::addressPins = PIN_MPLEX_ADDRESSES;
 const std::array<uint, NUM_MPLEX_DATA_PINS> WeaponController::mPlexDataPins = PIN_MPLEX_DATA;
 
@@ -9,6 +9,8 @@ std::array<bool, NUM_WEAPONS> WeaponController::weaponDataChanged;
 
 queue_t *WeaponController::hitQueue;
 queue_t *WeaponController::weaponQueue;
+
+uint64_t timeSinceLastUpdate = 0;
 
 /// @brief Initializes the WeaponController
 /// @param hitQueue
@@ -23,6 +25,8 @@ void WeaponController::Init(queue_t *hitQueue, queue_t *weaponQueue)
 
     WeaponController::hitQueue = hitQueue;
     WeaponController::weaponQueue = weaponQueue;
+
+    timeSinceLastUpdate = 0;
 }
 
 /// @brief Collects the hit and weapon data and puts it in the appropriate queues
@@ -30,7 +34,18 @@ void WeaponController::Init(queue_t *hitQueue, queue_t *weaponQueue)
 void WeaponController::Run()
 {
     CollectHitData();
-    CollectWeaponData();
+    // CollectWeaponData();
+
+    // TODO: Remove this
+    uint64_t currentTime = to_ms_since_boot(get_absolute_time());
+    if (currentTime - timeSinceLastUpdate > 5000)
+    {
+        int randomWeapon = rand() % NUM_WEAPONS;
+        weaponDataChanged[randomWeapon] = true;
+        weaponData[randomWeapon] = rand() % 31;
+        timeSinceLastUpdate = currentTime;
+    }
+    // end TODO
 
     for (int i = 0; i < NUM_WEAPONS; i++)
     {

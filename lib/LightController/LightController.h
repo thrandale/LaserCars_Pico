@@ -4,7 +4,9 @@
 #include "pico/stdlib.h"
 #include "pico/time.h"
 #include <array>
+#include <map>
 #include <stdio.h>
+#include <string>
 
 #include "Adafruit_NeoPixel.h"
 #include "Animation.h"
@@ -14,7 +16,7 @@
 #include "DeathAnimation.h"
 #include "HitAnimation.h"
 
-#define NUM_LIGHTS 8
+#define NUM_LIGHTS 3
 #define NUM_ZONES 3
 
 enum Zone
@@ -23,6 +25,8 @@ enum Zone
     MIDDLE = 1,
     BACK = 2
 };
+
+typedef void (*FunctionPtr)();
 
 class LightController
 {
@@ -39,6 +43,9 @@ public:
 
     static void Run();
 
+    static void HandleBTSetZone(std::string data);
+    static void HandleBTPlayAnim(std::string data);
+
     static uint32_t Color(uint8_t r, uint8_t g, uint8_t b);
 
 private:
@@ -51,6 +58,8 @@ private:
     static DeathAnimation deathAnimation;
     static ConnectingAnimation connectingAnimation;
     static ConnectedAnimation connectedAnimation;
+
+    static std::map<int, FunctionPtr> animations;
 
     static std::array<uint8_t, NUM_ZONES> r;
     static std::array<uint8_t, NUM_ZONES> g;

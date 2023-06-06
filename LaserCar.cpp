@@ -51,13 +51,20 @@ int main()
 
     while (true)
     {
-        // LightController::Run();
+        LightController::Run();
 
         // receive hits
         queue_entry_t hitEntry;
         while (queue_try_remove(&hitQueue, &hitEntry))
         {
             BTController::NotifyHit(hitEntry);
+        }
+
+        // receive weapon data
+        queue_entry_t weaponEntry;
+        while (queue_try_remove(&weaponQueue, &weaponEntry))
+        {
+            BTController::NotifyWeaponData(weaponEntry);
         }
     }
 }
