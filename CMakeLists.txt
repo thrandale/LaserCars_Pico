@@ -34,6 +34,7 @@ target_link_libraries(${PROJECT_NAME}
   pico_multicore
   pico_btstack_cyw43
   pico_neopixel
+  pico_sync
   # Add other libraries here
   HitAnimation
   Animation

@@ -16,7 +16,15 @@ std::array<uint8_t, NUM_ZONES> LightController::r;
 std::array<uint8_t, NUM_ZONES> LightController::g;
 std::array<uint8_t, NUM_ZONES> LightController::b;
 
+std::array<uint8_t, NUM_ZONES> LightController::rTemp;
+std::array<uint8_t, NUM_ZONES> LightController::gTemp;
+std::array<uint8_t, NUM_ZONES> LightController::bTemp;
+
 std::array<bool, NUM_ZONES> LightController::changed;
+std::array<bool, NUM_ZONES> LightController::tempChanged;
+
+mutex_t LightController::colorMutex;
+
 double LightController::brightness = 1;
 
 void LightController::Init()
@@ -26,7 +34,15 @@ void LightController::Init()
     r.fill(0);
     g.fill(0);
     b.fill(0);
+
+    rTemp.fill(0);
+    gTemp.fill(0);
+    bTemp.fill(0);
+
     changed.fill(false);
+    tempChanged.fill(false);
+
+    mutex_init(&colorMutex);
 
     timeOfLastFrame = 0;
     currentAnimation = nullptr;
@@ -45,10 +61,22 @@ void LightController::Init()
 /// @param zone
 void LightController::SetColor(uint8_t r, uint8_t g, uint8_t b, Zone zone)
 {
-    LightController::r[zone] = r;
-    LightController::g[zone] = g;
-    LightController::b[zone] = b;
-    changed[zone] = true;
+    mutex_enter_blocking(&colorMutex);
+    if (currentAnimation == nullptr)
+    {
+        LightController::r[zone] = r;
+        LightController::g[zone] = g;
+        LightController::b[zone] = b;
+        changed[zone] = true;
+    }
+    else
+    {
+        rTemp[zone] = r;
+        gTemp[zone] = g;
+        bTemp[zone] = b;
+        tempChanged[zone] = true;
+    }
+    mutex_exit(&colorMutex);
 }
 
 void LightController::PlayHit()
@@ -65,6 +93,7 @@ void LightController::PlayDeath()
 
 void LightController::PlayConnecting()
 {
+    printf("Playing connecting\n");
     LightController::SetColor(22, 100, 221, Zone::FRONT);
     LightController::SetColor(22, 100, 221, Zone::MIDDLE);
     LightController::SetColor(22, 100, 221, Zone::BACK);
@@ -125,9 +154,26 @@ void LightController::Run()
             SetAllChanged();
         }
     }
+    else
+    {
+        mutex_enter_blocking(&colorMutex);
+        for (int i = 0; i < NUM_ZONES; i++)
+        {
+            if (tempChanged[i])
+            {
+                r[i] = rTemp[i];
+                g[i] = gTemp[i];
+                b[i] = bTemp[i];
+                changed[i] = true;
+                tempChanged[i] = false;
+            }
+        }
+        mutex_exit(&colorMutex);
+    }
 
     bool didChange = false;
 
+    mutex_enter_blocking(&colorMutex);
     for (int i = 0; i < NUM_ZONES; i++)
     {
         if (changed[i])
@@ -136,20 +182,24 @@ void LightController::Run()
             switch ((Zone)i)
             {
             case FRONT:
-                pixels.fill(color, 0, 2);
+                // pixels.fill(color, 0, 2);
+                pixels.fill(color, 0, 1);
                 break;
             case MIDDLE:
-                pixels.fill(color, 2, 2);
-                pixels.fill(color, 6, 2);
+                // pixels.fill(color, 2, 2);
+                // pixels.fill(color, 6, 2);
+                pixels.fill(color, 1, 1);
                 break;
             case BACK:
-                pixels.fill(color, 4, 2);
+                // pixels.fill(color, 4, 2);
+                pixels.fill(color, 2, 1);
                 break;
             }
             changed[i] = false;
             didChange = true;
         }
     }
+    mutex_exit(&colorMutex);
 
     if (didChange)
     {

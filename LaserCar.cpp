@@ -18,14 +18,17 @@ queue_t weaponQueue;
 queue_t sendQueue;
 
 // Core 1 runs the WeaponController (And subsequently the IR Receiver)
+// as well as the LightController
 void core1_entry()
 {
     WeaponController::Init(&hitQueue, &weaponQueue);
+    LightController::Init();
 
     while (true)
     {
         WeaponController::Run();
-        sleep_ms(10);
+        LightController::Run();
+        sleep_ms(5);
     }
 }
 
@@ -47,11 +50,9 @@ int main()
     BTController::Start();
     DriveController::Init();
     FireController::Init();
-    LightController::Init();
 
     while (true)
     {
-        LightController::Run();
 
         // receive hits
         queue_entry_t hitEntry;

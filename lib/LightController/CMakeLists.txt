@@ -12,6 +12,7 @@ target_link_libraries(
   pico_neopixel
   hardware_pio
   pico_time
+  pico_sync
 )
 
 target_include_directories (LightController PUBLIC

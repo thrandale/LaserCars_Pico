@@ -1,6 +1,7 @@
 #ifndef LIGHTCONTROLLER_H
 #define LIGHTCONTROLLER_H
 
+#include "pico/mutex.h"
 #include "pico/stdlib.h"
 #include "pico/time.h"
 #include <array>
@@ -65,7 +66,15 @@ private:
     static std::array<uint8_t, NUM_ZONES> g;
     static std::array<uint8_t, NUM_ZONES> b;
 
+    static std::array<uint8_t, NUM_ZONES> rTemp;
+    static std::array<uint8_t, NUM_ZONES> gTemp;
+    static std::array<uint8_t, NUM_ZONES> bTemp;
+
     static std::array<bool, NUM_ZONES> changed;
+    static std::array<bool, NUM_ZONES> tempChanged;
+
+    static mutex_t colorMutex;
+
     static double brightness;
 
     static void StartAnimation();
