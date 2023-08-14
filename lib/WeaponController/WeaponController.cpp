@@ -86,11 +86,11 @@ void WeaponController::CollectHitData()
             if (rx_data != (uint8_t)-1 && hitData[i] == (uint8_t)-1)
             {
                 hitData[i] = rx_data;
-                printf("\tReceiver %d received data: %02x\n", i, rx_data);
+                PRINTF("\tReceiver %d received data: %02x\n", i, rx_data);
             }
             else if (rx_data == (uint8_t)-1)
             {
-                printf("\tReceiver %d received unknown data: %08x\n", i, rx_frames[i]);
+                PRINTF("\tReceiver %d received unknown data: %08x\n", i, rx_frames[i]);
             }
         }
     }

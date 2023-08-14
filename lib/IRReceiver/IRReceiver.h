@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #include "Constants.h"
+#include "Debug.h"
 #include "IRReceiver.pio.h"
 
 class IRReceiver

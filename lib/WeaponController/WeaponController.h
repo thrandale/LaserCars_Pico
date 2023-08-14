@@ -6,6 +6,7 @@
 #include <array>
 
 #include "Constants.h"
+#include "Debug.h"
 #include "IRReceiver.h"
 
 #define NUM_MPLEX_ADDRESS_PINS 3

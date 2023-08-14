@@ -8,6 +8,7 @@
 #include <string>
 
 #include "Constants.h"
+#include "Debug.h"
 
 #define MIN_SPEED 0.3
 

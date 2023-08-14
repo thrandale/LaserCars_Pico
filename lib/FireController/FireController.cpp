@@ -79,10 +79,10 @@ void FireController::Fire(int *sides, int numSides)
 /// @param data The data received (as a 5 bit bit mask)
 void FireController::HandleBTData(std::string data)
 {
-    printf("Fire data: %s\n", data.c_str());
+    PRINTF("Fire data: %s\n", data.c_str());
     // decode the data
     uint8_t sides = std::stoi(data);
-    printf("Sides: %d\n", sides);
+    PRINTF("Sides: %d\n", sides);
 
     // fire on the sides
     int sidesToFire[NUM_WEAPONS];
@@ -94,10 +94,10 @@ void FireController::HandleBTData(std::string data)
             sidesToFire[numSides++] = i;
         }
     }
-    printf("Sides to fire: ");
+    PRINTF("Sides to fire: ");
     for (int i = 0; i < numSides; i++)
     {
-        printf("%d ", sidesToFire[i]);
+        PRINTF("%d ", sidesToFire[i]);
     }
 
     Fire(sidesToFire, numSides);

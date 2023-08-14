@@ -23,7 +23,7 @@ void IRReceiver::Init()
     }
     else
     {
-        printf("Could not add program");
+        PRINTF("Could not add program");
     }
 
     // claim unused state machines on this PIO
@@ -32,7 +32,7 @@ void IRReceiver::Init()
         sms[i] = pio_claim_unused_sm(PIO_IR_REC, true);
         if (sms[i] == -1)
         {
-            printf("Could not claim unused SM for pin %d", pins[i]);
+            PRINTF("Could not claim unused SM for pin %d", pins[i]);
         }
     }
 

@@ -7,6 +7,7 @@
 #include "pico/stdlib.h"
 #include <string>
 
+#include "Debug.h"
 #include "DriveController.h"
 #include "FireController.h"
 #include "LightController.h"

@@ -73,7 +73,7 @@ void BTController::packet_handler(uint8_t packet_type, uint16_t channel, uint8_t
         if (btstack_event_state_get_state(packet) != HCI_STATE_WORKING)
             return;
         gap_local_bd_addr(local_addr);
-        printf("BTstack up and running on %s.\n", bd_addr_to_str(local_addr));
+        PRINTF("BTstack up and running on %s.\n", bd_addr_to_str(local_addr));
 
         memset(null_addr, 0, 6);
         gap_advertisements_set_params(adv_int_min, adv_int_max, adv_type, 0, null_addr, 0x07, 0x00);
@@ -105,7 +105,7 @@ int BTController::att_write_callback(hci_con_handle_t connection_handle, uint16_
 
     std::string data = std::string((char *)buffer, buffer_size);
 
-    printf("BT Received: %s\n", data.c_str());
+    PRINTF("BT Received: %s\n", data.c_str());
 
     switch (att_handle)
     {

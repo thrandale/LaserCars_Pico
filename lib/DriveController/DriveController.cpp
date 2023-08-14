@@ -46,7 +46,7 @@ void DriveController::Move(std::string data)
     }
     catch (const std::exception &e)
     {
-        printf("Error: %s\n", e.what());
+        PRINTF("Error: %s\n", e.what());
         return;
     }
 

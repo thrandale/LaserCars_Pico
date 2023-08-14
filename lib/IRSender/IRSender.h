@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "Constants.h"
+#include "Debug.h"
 // import the assembled PIO state machine programs
 #include "IRSender_burst.pio.h"
 #include "IRSender_control.pio.h"

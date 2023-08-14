@@ -93,7 +93,7 @@ void LightController::PlayDeath()
 
 void LightController::PlayConnecting()
 {
-    printf("Playing connecting\n");
+    PRINTF("Playing connecting\n");
     LightController::SetColor(22, 100, 221, Zone::FRONT);
     LightController::SetColor(22, 100, 221, Zone::MIDDLE);
     LightController::SetColor(22, 100, 221, Zone::BACK);
@@ -182,17 +182,35 @@ void LightController::Run()
             switch ((Zone)i)
             {
             case FRONT:
-                // pixels.fill(color, 0, 2);
-                pixels.fill(color, 0, 1);
+                if (NUM_LIGHTS == 8)
+                {
+                    pixels.fill(color, 0, 2);
+                }
+                else
+                {
+                    pixels.fill(color, 0, 1);
+                }
                 break;
             case MIDDLE:
-                // pixels.fill(color, 2, 2);
-                // pixels.fill(color, 6, 2);
-                pixels.fill(color, 1, 1);
+                if (NUM_LIGHTS == 8)
+                {
+                    pixels.fill(color, 2, 2);
+                    pixels.fill(color, 6, 2);
+                }
+                else
+                {
+                    pixels.fill(color, 1, 1);
+                }
                 break;
             case BACK:
-                // pixels.fill(color, 4, 2);
-                pixels.fill(color, 2, 1);
+                if (NUM_LIGHTS == 8)
+                {
+                    pixels.fill(color, 4, 2);
+                }
+                else
+                {
+                    pixels.fill(color, 2, 1);
+                }
                 break;
             }
             changed[i] = false;
@@ -221,14 +239,14 @@ void LightController::HandleBTSetZone(std::string data)
     }
     catch (const std::exception &e)
     {
-        printf("Error: %s\n", e.what());
+        PRINTF("Error: %s\n", e.what());
         return;
     }
 }
 
 void LightController::HandleBTPlayAnim(std::string data)
 {
-    printf("Playing animation %s\n", data.c_str());
+    PRINTF("Playing animation %s\n", data.c_str());
     int animation = std::stoi(data);
 
     try
@@ -240,7 +258,7 @@ void LightController::HandleBTPlayAnim(std::string data)
     }
     catch (const std::exception &e)
     {
-        printf("Error: %s\n", e.what());
+        PRINTF("Error: %s\n", e.what());
         return;
     }
 }

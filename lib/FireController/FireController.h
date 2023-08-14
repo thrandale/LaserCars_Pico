@@ -6,6 +6,7 @@
 #include <array>
 #include <string>
 
+#include "Debug.h"
 #include "IRSender.h"
 
 class FireController

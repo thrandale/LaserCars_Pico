@@ -16,14 +16,14 @@ void IRSender::Init()
     }
     else
     {
-        printf("Could not add burst program");
+        PRINTF("Could not add burst program");
     }
 
     // claim an unused state machine on this PIO
     burstSM = pio_claim_unused_sm(PIO_IR_SEND, true);
     if (burstSM == -1)
     {
-        printf("Could not claim unused SM for burst");
+        PRINTF("Could not claim unused SM for burst");
     }
 
     // configure and enable the state machine
@@ -42,14 +42,14 @@ void IRSender::Init()
     }
     else
     {
-        printf("Could not add control program");
+        PRINTF("Could not add control program");
     }
 
     // claim an unused state machine on this PIO
     controlSM = pio_claim_unused_sm(PIO_IR_SEND, true);
     if (controlSM == -1)
     {
-        printf("Could not claim unused SM for control");
+        PRINTF("Could not claim unused SM for control");
     }
 
     // configure and enable the state machine
@@ -65,7 +65,7 @@ void IRSender::Init()
 /// @param side The sides to send on (bitmask)
 void IRSender::Send(uint8_t data, uint8_t sides)
 {
-    printf("Sending %d on side %d\n", data, sides);
+    PRINTF("Sending %d on side %d\n", data, sides);
 
     // set the pin directions
     uint16_t command = pio_encode_set(pio_pindirs, sides);
