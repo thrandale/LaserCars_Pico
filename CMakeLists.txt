@@ -52,5 +52,5 @@ add_subdirectory(lib)
 
 # Enable uart output and disable usb output
 # Switch this if not using picoprobe
-pico_enable_stdio_usb(${PROJECT_NAME} 0)
-pico_enable_stdio_uart(${PROJECT_NAME} 1)
+pico_enable_stdio_usb(${PROJECT_NAME} 1)
+pico_enable_stdio_uart(${PROJECT_NAME} 0)

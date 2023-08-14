@@ -68,32 +68,32 @@ void DriveController::Move(std::string data)
         BCPower = -magnitude;
         break;
     case 1:
-        ADPower = magnitude;
+        ADPower = -magnitude;
         BCPower = 0;
         break;
     case 2:
-        ADPower = magnitude;
-        BCPower = magnitude;
+        ADPower = -magnitude;
+        BCPower = -magnitude;
         break;
     case 3:
         ADPower = 0;
-        BCPower = magnitude;
+        BCPower = -magnitude;
         break;
     case 4:
         ADPower = -magnitude;
         BCPower = magnitude;
         break;
     case 5:
-        ADPower = -magnitude;
+        ADPower = magnitude;
         BCPower = 0;
         break;
     case 6:
-        ADPower = -magnitude;
-        BCPower = -magnitude;
+        ADPower = magnitude;
+        BCPower = magnitude;
         break;
     case 7:
         ADPower = 0;
-        BCPower = -magnitude;
+        BCPower = magnitude;
         break;
     }
 
@@ -111,9 +111,9 @@ void DriveController::Move(std::string data)
 
     // set the motors, and divide them by turningScale to make sure none of them go over the top,
     // which would alter the translation angle
-    SetMotor(MOTORS[0], (ADPower + rotation) / turningScale);
-    SetMotor(MOTORS[1], (BCPower + rotation) / turningScale);
-    SetMotor(MOTORS[2], (BCPower - rotation) / turningScale);
+    SetMotor(MOTORS[0], (-BCPower + rotation) / turningScale);
+    SetMotor(MOTORS[1], (-ADPower - rotation) / turningScale);
+    SetMotor(MOTORS[2], (BCPower + rotation) / turningScale);
     SetMotor(MOTORS[3], (ADPower - rotation) / turningScale);
 }
 

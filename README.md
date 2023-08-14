@@ -8,12 +8,13 @@ NUM_WEAPONS - FireController, WeaponController
 ## Pins
 
 - 0, 1 - Debug UART (and LEDS)
-- 2-9 - Motors
-- 10-14 -IR LEDs
+- 2-5 - Motors 1
+- 22, 26-28 - Motors 2
+- 6-10 -IR LEDs
 - 18-21 - IR Receivers
-- 15-17 - Multiplexer Address
-- 26-28 - Multiplexer Data
-- 22 - Lone Weapon Data Pin
+- 11-13 - Multiplexer Address
+- 14-16 - Multiplexer Data
+- 17 - Lone Weapon Data Pin
 
 ## Weapon Data Format
 
