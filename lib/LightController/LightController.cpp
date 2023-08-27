@@ -1,9 +1,9 @@
 #include "LightController.h"
 
 Adafruit_NeoPixel LightController::pixels;
-uint64_t LightController::timeOfLastFrame;
-Animation *LightController::currentAnimation;
-int LightController::currentFrame;
+uint64_t LightController::timeOfLastFrame = 0;
+Animation *LightController::currentAnimation = nullptr;
+int LightController::currentFrame = 0;
 
 HitAnimation LightController::hitAnimation;
 DeathAnimation LightController::deathAnimation;
@@ -12,16 +12,16 @@ ConnectedAnimation LightController::connectedAnimation;
 
 std::map<int, FunctionPtr> LightController::animations = {{0, &PlayHit}, {1, &PlayDeath}};
 
-std::array<uint8_t, NUM_ZONES> LightController::r;
-std::array<uint8_t, NUM_ZONES> LightController::g;
-std::array<uint8_t, NUM_ZONES> LightController::b;
+std::array<uint8_t, NUM_ZONES> LightController::r = {0};
+std::array<uint8_t, NUM_ZONES> LightController::g = {0};
+std::array<uint8_t, NUM_ZONES> LightController::b = {0};
 
-std::array<uint8_t, NUM_ZONES> LightController::rTemp;
-std::array<uint8_t, NUM_ZONES> LightController::gTemp;
-std::array<uint8_t, NUM_ZONES> LightController::bTemp;
+std::array<uint8_t, NUM_ZONES> LightController::rTemp = {0};
+std::array<uint8_t, NUM_ZONES> LightController::gTemp = {0};
+std::array<uint8_t, NUM_ZONES> LightController::bTemp = {0};
 
-std::array<bool, NUM_ZONES> LightController::changed;
-std::array<bool, NUM_ZONES> LightController::tempChanged;
+std::array<bool, NUM_ZONES> LightController::changed = {false};
+std::array<bool, NUM_ZONES> LightController::tempChanged = {false};
 
 mutex_t LightController::colorMutex;
 
@@ -31,22 +31,7 @@ void LightController::Init()
 {
     pixels = Adafruit_NeoPixel(NUM_LIGHTS, PIN_NEOPIXELS);
 
-    r.fill(0);
-    g.fill(0);
-    b.fill(0);
-
-    rTemp.fill(0);
-    gTemp.fill(0);
-    bTemp.fill(0);
-
-    changed.fill(false);
-    tempChanged.fill(false);
-
     mutex_init(&colorMutex);
-
-    timeOfLastFrame = 0;
-    currentAnimation = nullptr;
-    currentFrame = 0;
 
     hitAnimation = HitAnimation();
     deathAnimation = DeathAnimation();

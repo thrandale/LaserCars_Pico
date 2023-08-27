@@ -3,9 +3,9 @@
 const std::array<uint, NUM_MPLEX_ADDRESS_PINS> WeaponController::addressPins = PIN_MPLEX_ADDRESSES;
 const std::array<uint, NUM_MPLEX_DATA_PINS> WeaponController::mPlexDataPins = PIN_MPLEX_DATA;
 
-std::array<uint8_t, NUM_RECEIVERS> WeaponController::hitData;
-std::array<uint8_t, NUM_WEAPONS> WeaponController::weaponData;
-std::array<bool, NUM_WEAPONS> WeaponController::weaponDataChanged;
+std::array<uint8_t, NUM_RECEIVERS> WeaponController::hitData = {0};
+std::array<uint8_t, NUM_WEAPONS> WeaponController::weaponData = {255};
+std::array<bool, NUM_WEAPONS> WeaponController::weaponDataChanged = {false};
 
 queue_t *WeaponController::hitQueue;
 queue_t *WeaponController::weaponQueue;
@@ -19,14 +19,8 @@ void WeaponController::Init(queue_t *hitQueue, queue_t *weaponQueue)
 {
     IRReceiver::Init();
 
-    hitData.fill(-1);
-    weaponData.fill(-1);
-    weaponDataChanged.fill(false);
-
     WeaponController::hitQueue = hitQueue;
     WeaponController::weaponQueue = weaponQueue;
-
-    timeSinceLastUpdate = 0;
 }
 
 /// @brief Collects the hit and weapon data and puts it in the appropriate queues

@@ -1,20 +1,14 @@
 #include "FireController.h"
 
-std::array<uint8_t, NUM_WEAPONS> FireController::weaponData;
-bool FireController::isInGame;
-uint8_t FireController::carId;
+std::array<uint8_t, NUM_WEAPONS> FireController::weaponData = {0};
+bool FireController::isInGame = true;
+uint8_t FireController::carId = 1;
 
 /// @brief Initializes the FireController
 void FireController::Init()
 {
     // initialize the IR sender
     IRSender::Init();
-
-    // initialize the weapon data
-    weaponData.fill(0);
-
-    carId = 1;
-    isInGame = true;
 }
 
 /// @brief Joins the game
