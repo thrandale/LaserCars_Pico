@@ -46,7 +46,6 @@ void DriveController::Move(std::string data)
     }
     catch (const std::exception &e)
     {
-        PRINTF("Error: %s\n", e.what());
         return;
     }
 
@@ -68,32 +67,32 @@ void DriveController::Move(std::string data)
         BCPower = -magnitude;
         break;
     case 1:
-        ADPower = -magnitude;
-        BCPower = 0;
+        ADPower = 0;
+        BCPower = -magnitude;
         break;
     case 2:
         ADPower = -magnitude;
         BCPower = -magnitude;
         break;
     case 3:
-        ADPower = 0;
-        BCPower = -magnitude;
+        ADPower = -magnitude;
+        BCPower = 0;
         break;
     case 4:
         ADPower = -magnitude;
         BCPower = magnitude;
         break;
     case 5:
-        ADPower = magnitude;
-        BCPower = 0;
+        ADPower = 0;
+        BCPower = magnitude;
         break;
     case 6:
         ADPower = magnitude;
         BCPower = magnitude;
         break;
     case 7:
-        ADPower = 0;
-        BCPower = magnitude;
+        ADPower = magnitude;
+        BCPower = 0;
         break;
     }
 
