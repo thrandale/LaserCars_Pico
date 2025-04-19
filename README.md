@@ -89,7 +89,7 @@ NUM_WEAPONS - FireController, WeaponController
 - Settings
   - Free for all or team mode
   - Number of rounds
-  - Round Length
+  - Round Lengths
     - Time limit
     - Last man/team standing
 
@@ -100,3 +100,101 @@ NUM_WEAPONS - FireController, WeaponController
 - Settings
   - Number of teams
   - Disabled time
+
+# Weapons
+
+## Rifle
+
+- Medium Damage
+- Medium spread
+- Medium rate of fire
+
+## Shotgun
+
+- Low Damage
+- High spread
+- Medium rate of fire
+
+## Sniper
+
+- Very High Damage
+- Low spread
+- Low rate of fire
+
+## Machine gun
+
+- Low Damage
+- Medium spread
+- High rate of fire
+
+## Rocket Launcher
+
+- High Damage
+- High spread
+- Very low rate of fire
+- Ammo limited?
+
+## Laser (Energy)
+
+- Very Low Damage
+- Low spread
+- Very high rate of fire
+
+## Plasma Cannon (Energy)
+
+- Damage equal to charge time (with max)
+- Medium spread
+
+## EMP (Energy)
+
+- Does no damage
+- Medium spread
+- Low rate of fire
+- Invert controls for x seconds
+- Disables all energy modules for x + y seconds
+
+## Ice cannon
+
+- Low damage
+- Medium spread
+- Low rate of fire
+- Reduce speed by x% for x seconds
+- Reduce the effectiveness of projectile modules
+
+## Acid Cannon
+
+- Applies x damage over time
+- Medium spread
+- Low rate of fire
+- Does not get reflected
+- Penetrates energy shields
+
+# Shields
+
+## Reflector (Energy)
+
+- Reflect x% of damage back to the shooter
+
+## Force Field (Energy)
+
+- Absorbs all damage below x, until exhausted.
+- If not hit for x seconds, it starts to recharge
+
+## Shield
+
+- Absorbs x% of damage
+
+## Armor
+
+- Increases max health by x
+
+## TODO for model
+
+- Fix/Add weapon offset
+- Add connections between layers
+- Support top weapon connection
+- Test prints
+  - bottom plate tolerance
+    - clip
+  - weapon connection tolerance
+    - including top weapon
