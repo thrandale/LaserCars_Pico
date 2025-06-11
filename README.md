@@ -198,3 +198,4 @@ NUM_WEAPONS - FireController, WeaponController
     - clip
   - weapon connection tolerance
     - including top weapon
+  - Weapon module connection
